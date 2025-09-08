@@ -1,0 +1,90 @@
+spring:
+  application:
+    name: kill-batch-system
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:org/springframework/batch/core/schema-drop-postgresql.sql
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+      name: crawlGoalNewsJob
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate.jdbc.batch_size: 50
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
+  datasource:
+    url: jdbc:postgresql://localhost:5433/postgres
+    driver-class-name: org.postgresql.Driver
+    username: root
+    password: password
+  config:
+    import: optional:file:.env[.properties]
+
+openai:
+  api-key: ${OPENAI_API_KEY}
+  model: gpt-3.5-turbo
+
+summary:
+  scheduler:
+    enabled: false
+    fixed-delay-ms: 6000000   # 10분마다 실행 (이전 실행 끝난 뒤 1분 후)
+    batch-size: 2          # 한 번 실행당 가져올 건수
+    max-per-tick: 200       # 한 번 실행에서 최대 처리 총량 (여러 배치 루프)
+    throttle-ms: 300        # OpenAI 호출 사이 간격 (과금/레이트리밋 대비)
+
+crawler:
+  throttleMs: 200
+  list:
+    wfootball: "https://m.sports.naver.com/wfootball/news/list?date={date}&page={page}"
+
+espn:
+  json:
+    epl-url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
+  limit: 20
+  max-items: 120
+
+goal:
+  sitemap-url: "https://www.goal.com/en-sa/google-news/page"
+  max-items: 20
+  recent-hours: 48
+  throttleMs: 400
+  min-content-length: 180
+
+security:
+  jwt:
+    secret: ${SECURITY_JWT_SECRET}
+    access-token-validity-seconds: 900 # 15분
+    refresh-token-validity-seconds: 604800 # 7일
+
+hancut:
+  admin:
+    nickname: ${ADMIN_NICKNAME}
+    password: ${ADMIN_PASSWORD}
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    region: ap-northeast-2
+    s3:
+      bucket: ${BUCKET_NAME}
+
+file:
+  upload:
+    profiles:
+      path: profiles/images/
+      allowed-extensions: jpg,jpeg,png,gif,webp
+      max-size: 5242880
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: scheduledtasks
