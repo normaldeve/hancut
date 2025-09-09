@@ -1,16 +1,14 @@
 package com.system.batch.killbatchsystem.comment.application;
 
-import com.system.batch.killbatchsystem.comment.domain.CommentCursor;
 import com.system.batch.killbatchsystem.comment.domain.Comments;
 import com.system.batch.killbatchsystem.comment.domain.CreateComment;
 import com.system.batch.killbatchsystem.comment.domain.GetComment;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.application.AISummaryRepository;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,27 +33,10 @@ public class CommentServiceImpl implements CommentService {
 
   @Override
   @Transactional(readOnly = true)
-  public GetComment getComments(Long aiSummaryId, Integer size, CommentCursor cursor) {
-    int pageSize = (size == null || size <= 0) ? 20 : Math.min(size, 100);
+  public GetComment getComments(Long aiSummaryId, int page, int size) {
+    Pageable pageable = PageRequest.of(page, size);
+    Page<Comments> comments = commentRepository.findPageByAiSummaryId(aiSummaryId, pageable);
 
-    LocalDateTime cursorCreatedAt = (cursor == null) ? null : cursor.createdAt();
-    Long cursorId = (cursor == null) ? null : cursor.id();
-
-    Pageable pageable = PageRequest.of(0, pageSize);
-
-    Slice<Comments> slice =
-        commentRepository.findSliceByAiSummaryId(aiSummaryId, cursorCreatedAt, cursorId, pageable);
-
-    CommentCursor nextCursor = null;
-    if (slice.hasNext() && slice.getNumberOfElements() > 0) {
-      Comments last = slice.getContent().get(slice.getNumberOfElements() - 1);
-      nextCursor = new CommentCursor(last.createdAt(), last.id());
-    }
-
-    return new GetComment(
-        slice.getContent(),
-        nextCursor,
-        slice.hasNext()
-    );
+    return GetComment.of(comments);
   }
 }

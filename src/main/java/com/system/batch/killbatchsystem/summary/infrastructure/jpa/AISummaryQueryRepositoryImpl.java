@@ -66,14 +66,7 @@ public class AISummaryQueryRepositoryImpl implements AISummaryQueryRepository {
   @Override
   public Page<AISummaryEntity> findPage(String keyword, String sourceName, Pageable pageable,
       SortBy sortBy) {
-    BooleanBuilder where = new BooleanBuilder();
-
-    if (keyword != null && !keyword.isBlank()) {
-      where.and(aISummaryEntity.keyword.any().eq(keyword.trim()));
-    }
-    if (sourceName != null && !sourceName.isBlank()) {
-      where.and(aISummaryEntity.sourceName.equalsIgnoreCase(sourceName.trim()));
-    }
+    BooleanBuilder where = buildWhereCondition(keyword, sourceName);
 
     Long total = queryFactory
         .select(aISummaryEntity.id.count())
@@ -115,7 +108,9 @@ public class AISummaryQueryRepositoryImpl implements AISummaryQueryRepository {
     // 2) 본문 로드 + ids 순서 보존
     List<AISummaryEntity> raw = queryFactory
         .selectFrom(aISummaryEntity)
+        .leftJoin(aISummaryEntity.keyword).fetchJoin() // 키워드 fetch join 추가
         .where(aISummaryEntity.id.in(ids))
+        .orderBy(aISummaryEntity.id.desc())
         .fetch();
 
     Map<Long, AISummaryEntity> byId = new LinkedHashMap<>();
@@ -123,6 +118,19 @@ public class AISummaryQueryRepositoryImpl implements AISummaryQueryRepository {
     List<AISummaryEntity> content = ids.stream().map(byId::get).toList();
 
     return new PageImpl<>(content, pageable, total);
+  }
+
+  private BooleanBuilder buildWhereCondition(String keyword, String sourceName) {
+    BooleanBuilder where = new BooleanBuilder();
+
+    if (keyword != null && !keyword.isBlank()) {
+      where.and(aISummaryEntity.keyword.any().eq(keyword.trim()));
+    }
+    if (sourceName != null && !sourceName.isBlank()) {
+      where.and(aISummaryEntity.sourceName.equalsIgnoreCase(sourceName.trim()));
+    }
+
+    return where;
   }
 
   // ===== 가중치 합 스코어 구현 =====

@@ -13,11 +13,10 @@ public record GetAISummary(
     String team,
     String thumbnailUrl,
     String url,
-    String sourceName,
-    long countComment
+    String sourceName
 ) {
 
-  public static GetAISummary fromArticle(AISummary aiSummary, long countComment) {
+  public static GetAISummary fromArticle(AISummary aiSummary) {
     return new GetAISummary(
         aiSummary.id(),
         aiSummary.title(),
@@ -28,8 +27,7 @@ public record GetAISummary(
         aiSummary.team(),
         aiSummary.thumbnailUrl(),
         aiSummary.url(),
-        aiSummary.sourceName(),
-        countComment
+        aiSummary.sourceName()
     );
   }
 }

@@ -25,8 +25,6 @@ public class SummaryServiceImpl implements SummaryService {
 
   private final AISummarize aisummarize;
 
-  private final CommentRepository commentRepository;
-
   @Value("${keywords.top.max-limit:100}")
   private int maxLimit;
 
@@ -58,12 +56,11 @@ public class SummaryServiceImpl implements SummaryService {
   public Page<GetAISummary> getArticles(@Nullable String keyword, @Nullable String sourceName,
       Pageable pageable, SortBy sortBy) {
     Page<AISummary> page = aiSummaryRepository.findPage(keyword, sourceName, pageable, sortBy);
-
     return page.map(summary -> {
-      long commentCount = commentRepository.countByAiSummaryId(summary.id());
-      return GetAISummary.fromArticle(summary, commentCount);
+      return GetAISummary.fromArticle(summary);
     });
   }
+
 
   private Pageable topPage(int limit) {
     int size = Math.max(1, Math.min(limit, maxLimit));

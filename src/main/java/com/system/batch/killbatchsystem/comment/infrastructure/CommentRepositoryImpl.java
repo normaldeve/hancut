@@ -4,10 +4,9 @@ import com.system.batch.killbatchsystem.comment.domain.Comments;
 import com.system.batch.killbatchsystem.comment.infrastructure.jpa.CommentEntity;
 import com.system.batch.killbatchsystem.comment.infrastructure.jpa.CommentJpaRepository;
 import com.system.batch.killbatchsystem.comment.application.CommentRepository;
-import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -24,16 +23,10 @@ public class CommentRepositoryImpl implements CommentRepository {
   }
 
   @Override
-  public Slice<Comments> findSliceByAiSummaryId(Long aiSummaryId, LocalDateTime cursorCreatedAt,
-      Long cursorId, Pageable pageable) {
-    Slice<CommentEntity> slice = commentJpaRepository
-        .findSliceByAiSummaryId(aiSummaryId, cursorCreatedAt, cursorId, pageable);
+  public Page<Comments> findPageByAiSummaryId(Long aiSummaryId, Pageable pageable) {
+    Page<CommentEntity> page = commentJpaRepository
+        .findPageByAiSummaryId(aiSummaryId, pageable);
 
-    return slice.map(CommentEntity::toModel);
-  }
-
-  @Override
-  public long countByAiSummaryId(Long aiSummaryId) {
-    return commentJpaRepository.countByAiSummaryId(aiSummaryId);
+    return page.map(CommentEntity::toModel);
   }
 }

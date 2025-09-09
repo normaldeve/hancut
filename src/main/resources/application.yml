@@ -18,6 +18,11 @@ spring:
       hibernate.jdbc.batch_size: 50
       hibernate.order_inserts: true
       hibernate.order_updates: true
+      hibernate.show_sql: true                    # SQL 출력
+      hibernate.format_sql: true                  # SQL 포맷팅
+      hibernate.use_sql_comments: true            # 어떤 엔티티에서 실행된 SQL인지 주석 표시
+      hibernate.highlight_sql: true              # SQL 구문 하이라이팅 (콘솔에서)
+      hibernate.type.descriptor.sql.BasicBinder: TRACE  # 파라미터 값까지 출력
   datasource:
     url: jdbc:postgresql://localhost:5433/postgres
     driver-class-name: org.postgresql.Driver

@@ -10,5 +10,4 @@ public interface AISummaryQueryRepository {
   List<TopKeyword> findTopKeywords(Pageable pageable);
 
   Page<AISummaryEntity> findPage(String keyword, String sourceName, Pageable pageable, SortBy sortBy);
-
 }
