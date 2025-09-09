@@ -34,7 +34,7 @@ public class ReactionRepositoryImpl implements ReactionRepository {
   public void delete(Reaction reaction) {
     ReactionEntity reactionEntity = ReactionEntity.fromModel(reaction);
 
-    reactionJpaRepository.deleteByAiSummaryId(reactionEntity.getAiSummaryId());
+    reactionJpaRepository.deleteByAiSummaryIdAndUserId(reactionEntity.getAiSummaryId(), reactionEntity.getUserId());
 
   }
 
@@ -46,8 +46,8 @@ public class ReactionRepositoryImpl implements ReactionRepository {
   }
 
   @Override
-  public void updateType(ReactionType type, Long aiSummaryId) {
-    ReactionEntity reactionEntity = reactionJpaRepository.findById(aiSummaryId)
+  public void updateType(ReactionType type, Long aiSummaryId, String userId) {
+    ReactionEntity reactionEntity = reactionJpaRepository.findByAiSummaryIdAndUserId(aiSummaryId, userId)
         .orElseThrow(() -> new RuntimeException("Can not found reaction"));
 
     reactionEntity.changeType(type);

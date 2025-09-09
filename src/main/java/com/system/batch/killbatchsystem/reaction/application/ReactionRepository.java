@@ -15,5 +15,5 @@ public interface ReactionRepository {
 
   void save(Reaction reaction);
 
-  void updateType(ReactionType type, Long aiSummaryId);
+  void updateType(ReactionType type, Long aiSummaryId, String userId);
 }

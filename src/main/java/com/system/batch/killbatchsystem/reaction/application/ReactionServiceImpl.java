@@ -61,7 +61,7 @@ public class ReactionServiceImpl implements ReactionService {
         reactionRepository.delete(reaction);
       } else {
         log.info("다른 반응입니다. 반응을 업데이트합니다.");
-        reactionRepository.updateType(type, aiSummaryId);
+        reactionRepository.updateType(type, aiSummaryId, userId);
       }
     } else {
       log.info("새로운 반응을 생성합니다");

@@ -10,5 +10,5 @@ public interface ReactionJpaRepository extends JpaRepository<ReactionEntity, Lon
 
   Optional<ReactionEntity> findByAiSummaryIdAndUserId(Long aiSummaryId, String userId);
 
-  void deleteByAiSummaryId(Long aiSummaryId);
+  void deleteByAiSummaryIdAndUserId(Long aiSummaryId, String userId);
 }
