@@ -1,6 +1,5 @@
 package com.system.batch.killbatchsystem.summary.application;
 
-import com.system.batch.killbatchsystem.comment.application.CommentRepository;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.CreateSummary;
 import com.system.batch.killbatchsystem.summary.domain.GetAISummary;

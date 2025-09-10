@@ -5,6 +5,7 @@ import com.system.batch.killbatchsystem.summary.domain.PageResponse;
 import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
 import com.system.batch.killbatchsystem.summary.application.SummaryService;
 import com.system.batch.killbatchsystem.summary.infrastructure.jpa.SortBy;
+import io.micrometer.core.annotation.Timed;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ public class SummaryController {
 
   private final SummaryService summaryService;
 
+  @Timed(value = "api.summary.list", description = "AI 뉴스 요약 기사를 조회합니다")
   @GetMapping
   public ResponseEntity<PageResponse<GetAISummary>> getArticles(
       @RequestParam(required = false) String keyword,
@@ -38,6 +40,7 @@ public class SummaryController {
     return ResponseEntity.ok(body);
   }
 
+  @Timed(value = "api.summary.keyword", description = "가장 많이 나온 키워드 Top 10을 조회합니다.")
   @GetMapping("/keywords/top")
   public ResponseEntity<List<TopKeyword>> getTopKeywords(
       @RequestParam(defaultValue = "10") int limit

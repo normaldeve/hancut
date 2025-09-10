@@ -52,6 +52,7 @@ public class SecurityConfig {
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers(HttpMethod.GET, SecurityMatchers.ACTUATOR).permitAll()
             .requestMatchers(HttpMethod.GET, SecurityMatchers.SSE).permitAll()
             .requestMatchers(HttpMethod.POST, SecurityMatchers.VALIDATE_NICKNAME).permitAll()
             .requestMatchers(HttpMethod.POST, SecurityMatchers.EXISTS_NICKNAME).permitAll()

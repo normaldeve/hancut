@@ -11,6 +11,7 @@ public final class SecurityMatchers {
   private SecurityMatchers() {}
 
   // 공개(permitAll)로 두려는 엔드포인트 상수
+  public static final String ACTUATOR = "/actuator/metrics/**";
   public static final String SSE = "/api/notifications/stream";
   public static final String VALIDATE_NICKNAME = "/auth/validate-nickname";
   public static final String EXISTS_NICKNAME = "/auth/exist-nickname";
@@ -23,6 +24,7 @@ public final class SecurityMatchers {
 
   // 공개 엔드포인트 매처 (메서드까지 명시)
   private static final List<RequestMatcher> PUBLIC_MATCHERS = List.of(
+      new AntPathRequestMatcher(ACTUATOR,   HttpMethod.GET.name()),
       new AntPathRequestMatcher(SSE,   HttpMethod.GET.name()),
       new AntPathRequestMatcher(VALIDATE_NICKNAME,   HttpMethod.POST.name()),
       new AntPathRequestMatcher(EXISTS_NICKNAME,   HttpMethod.POST.name()),

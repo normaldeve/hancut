@@ -28,6 +28,7 @@ public class GoalCrawlJobConfig {
   ) {
     return new JobBuilder("crawlGoalNewsJob", jobRepository)
         .start(listToArticleStepForGoal)
+        .next(goalSummarizeStep())
         .build();
   }
 
@@ -49,7 +50,7 @@ public class GoalCrawlJobConfig {
   }
 
   @Bean
-  public Step summarizeStep() {
+  public Step goalSummarizeStep() {
     return new StepBuilder("goal.summarizeStep", jobRepository)
         .tasklet(summarizeTasklet, tx)
         .build();

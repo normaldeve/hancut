@@ -26,10 +26,11 @@ public class EspnCrawlJobConfig {
 
   @Bean
   public Job crawlEspnEplJob(
-      Step listToArticleStepForEspn
-  ) {
+      Step listToArticleStepForEspn,
+      Step goalSummarizeStep) {
     return new JobBuilder("crawlEspnEplJob", jobRepository)
         .start(listToArticleStepForEspn)
+        .next(espnSummarizeStep())
         .build();
   }
 
@@ -51,7 +52,7 @@ public class EspnCrawlJobConfig {
   }
 
   @Bean
-  public Step summarizeStep() {
+  public Step espnSummarizeStep() {
     return new StepBuilder("espn.summarizeStep", jobRepository)
         .tasklet(summarizeTasklet, tx)
         .build();

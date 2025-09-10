@@ -80,7 +80,7 @@ cloud:
 
 scheduler:
   naver:
-    cron: "0 38 * * * *"
+    cron: "0 30 * * * *"
   goal:
     cron: "0 10 */2 * * *"
   espn:
@@ -97,4 +97,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: scheduledtasks
+        include: metrics, health

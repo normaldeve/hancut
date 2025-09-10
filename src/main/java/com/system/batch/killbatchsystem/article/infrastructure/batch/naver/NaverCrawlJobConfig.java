@@ -30,7 +30,7 @@ public class NaverCrawlJobConfig {
   public Job crawlNaverSoccerJob(Step listToArticleStep) {
     return new JobBuilder("crawlNaverSoccerJob", jobRepository)
         .start(listToArticleStep)
-        .next(summarizeStep())
+        .next(naverSummarizeStep())
         .build();
   }
 
@@ -58,7 +58,7 @@ public class NaverCrawlJobConfig {
   }
 
   @Bean
-  public Step summarizeStep() {
+  public Step naverSummarizeStep() {
     return new StepBuilder("naver.summarizeStep", jobRepository)
         .tasklet(summarizeTasklet, tx)
         .build();
