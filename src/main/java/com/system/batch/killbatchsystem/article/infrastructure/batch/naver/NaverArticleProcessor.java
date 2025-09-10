@@ -27,9 +27,6 @@ import java.util.regex.Pattern;
 @StepScope
 public class NaverArticleProcessor implements ItemProcessor<String, Article> {
 
-  @Value("${crawler.content.max-chars:700}")
-  private int maxChars;
-
   @Override
   public Article process(String url) throws Exception {
     log.info("[Detail] GET {}", url);

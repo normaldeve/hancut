@@ -51,10 +51,6 @@ public class GoalArticleProcessor implements ItemProcessor<GoalSitemapItem, Arti
         .get();
 
     // 메타
-    String title = firstNonBlank(
-        meta(doc, "meta[property=og:title]"),
-        item.getTitle()
-    );
     String description = meta(doc, "meta[property=og:description]");
     String thumbnail = firstNonBlank(
         meta(doc, "meta[property=og:image]"),

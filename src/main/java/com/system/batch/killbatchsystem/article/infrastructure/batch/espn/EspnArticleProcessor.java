@@ -45,7 +45,6 @@ public class EspnArticleProcessor implements ItemProcessor<String, Article> {
         .get();
 
     // 2) 메타/서브 메타
-    String title = meta(doc, "meta[property=og:title]");
     String description = meta(doc, "meta[property=og:description]");
     String thumbnail = firstNonBlank(
         meta(doc, "meta[property=og:image]"),
