@@ -10,7 +10,6 @@ spring:
       initialize-schema: always
     job:
       enabled: false
-      name: crawlGoalNewsJob
   jpa:
     hibernate:
       ddl-auto: validate
@@ -80,6 +79,14 @@ cloud:
     region: ap-northeast-2
     s3:
       bucket: ${BUCKET_NAME}
+
+scheduler:
+  naver:
+    cron: "0 38 * * * *"
+  goal:
+    cron: "0 10 */2 * * *"
+  espn:
+    cron: "0 0 */6 * * *"
 
 file:
   upload:

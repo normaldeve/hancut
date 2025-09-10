@@ -1,6 +1,7 @@
 package com.system.batch.killbatchsystem.article.infrastructure.batch.naver;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.SummarizeTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -23,11 +24,13 @@ public class NaverCrawlJobConfig {
 
   private final JobRepository jobRepository;
   private final PlatformTransactionManager tx;
+  private final SummarizeTasklet summarizeTasklet;
 
   @Bean
   public Job crawlNaverSoccerJob(Step listToArticleStep) {
     return new JobBuilder("crawlNaverSoccerJob", jobRepository)
         .start(listToArticleStep)
+        .next(summarizeStep())
         .build();
   }
 
@@ -51,6 +54,13 @@ public class NaverCrawlJobConfig {
         .faultTolerant()
         .retry(Exception.class).retryLimit(3)
         .skip(Exception.class).skipLimit(50)
+        .build();
+  }
+
+  @Bean
+  public Step summarizeStep() {
+    return new StepBuilder("naver.summarizeStep", jobRepository)
+        .tasklet(summarizeTasklet, tx)
         .build();
   }
 }

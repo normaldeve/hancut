@@ -5,6 +5,7 @@ import com.system.batch.killbatchsystem.comment.domain.CreateComment;
 import com.system.batch.killbatchsystem.comment.domain.GetComment;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.application.AISummaryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
   @Transactional
   public Comments create(Long aiSummaryId, CreateComment createComment) {
     AISummary aiSummary = summaryRepository.findById(aiSummaryId)
-        .orElseThrow(() -> new RuntimeException("Can not found AI summary : {}" + aiSummaryId));
+        .orElseThrow(() -> new EntityNotFoundException("Can not found AI summary : {}" + aiSummaryId));
 
     Comments comments = Comments.createComment(createComment, aiSummary);
 

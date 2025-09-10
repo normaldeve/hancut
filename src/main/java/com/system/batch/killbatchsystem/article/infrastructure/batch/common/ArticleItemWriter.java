@@ -1,4 +1,4 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch;
+package com.system.batch.killbatchsystem.article.infrastructure.batch.common;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
 import com.system.batch.killbatchsystem.article.application.ArticleRepository;
@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j

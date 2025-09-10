@@ -1,6 +1,8 @@
 package com.system.batch.killbatchsystem.article.infrastructure.batch.goal;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.SummarizeTasklet;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -13,11 +15,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
+@RequiredArgsConstructor
 public class GoalCrawlJobConfig {
+
+  private final SummarizeTasklet summarizeTasklet;
+  private final PlatformTransactionManager tx;
+  private final JobRepository jobRepository;
 
   @Bean
   public Job crawlGoalNewsJob(
-      JobRepository jobRepository,
       Step listToArticleStepForGoal
   ) {
     return new JobBuilder("crawlGoalNewsJob", jobRepository)
@@ -27,8 +33,6 @@ public class GoalCrawlJobConfig {
 
   @Bean
   public Step listToArticleStepForGoal(
-      JobRepository jobRepository,
-      PlatformTransactionManager tx,
       GoalNewsSitemapReader goalNewsSitemapReader,                // Reader: GoalSitemapItem
       ItemProcessor<GoalSitemapItem, Article> goalArticleProcessor, // Processor: sitemap-aware
       ItemWriter<Article> articleItemWriter
@@ -41,6 +45,13 @@ public class GoalCrawlJobConfig {
         .faultTolerant()
         .retry(Exception.class).retryLimit(3)
         .skip(Exception.class).skipLimit(50)
+        .build();
+  }
+
+  @Bean
+  public Step summarizeStep() {
+    return new StepBuilder("goal.summarizeStep", jobRepository)
+        .tasklet(summarizeTasklet, tx)
         .build();
   }
 }
