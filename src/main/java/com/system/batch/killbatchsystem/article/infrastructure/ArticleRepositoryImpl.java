@@ -25,6 +25,15 @@ public class ArticleRepositoryImpl implements ArticleRepository {
   }
 
   @Override
+  public void failedSummary(Article article) {
+    ArticleEntity articleEntity = articleJpaRepository.findById(article.id())
+        .orElseThrow(() -> new RuntimeException("Can not Found Article"));
+
+    articleEntity.failedSummary();
+
+  }
+
+  @Override
   public List<Article> findBatchForSummarize(Pageable pageable) {
     return articleJpaRepository.findBatchForSummarize(pageable).stream()
         .map(ArticleEntity::toModel)

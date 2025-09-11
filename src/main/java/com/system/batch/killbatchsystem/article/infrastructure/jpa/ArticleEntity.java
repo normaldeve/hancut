@@ -64,6 +64,10 @@ public class ArticleEntity {
     this.summarizeStatus = SummarizeStatus.DONE;
   }
 
+  public void failedSummary() {
+    this.summarizeStatus = SummarizeStatus.FAILED;
+  }
+
   @Builder
   public ArticleEntity(String articleId, String url, String content, String thumbnailUrl,
       String sourceName, LocalDateTime publishedAt, LocalDateTime createdAt,

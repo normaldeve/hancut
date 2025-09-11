@@ -24,10 +24,10 @@ spring:
       hibernate.highlight_sql: true              # SQL 구문 하이라이팅 (콘솔에서)
       hibernate.type.descriptor.sql.BasicBinder: TRACE  # 파라미터 값까지 출력
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: ${DATABASE_URL}
     driver-class-name: org.postgresql.Driver
-    username: root
-    password: password
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
   config:
     import: optional:file:.env[.properties]
 
@@ -83,9 +83,9 @@ scheduler:
   naver:
     cron: "0 10 * * * *"
   goal:
-    cron: "0 30 * * * *"
+    cron: "0 30 */2 * * *"
   espn:
-    cron: "0 0 */6 * * *"
+    cron: "0 30 */12 * * *"
 
 file:
   upload:

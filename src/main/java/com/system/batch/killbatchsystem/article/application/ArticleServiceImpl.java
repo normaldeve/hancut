@@ -21,6 +21,13 @@ public class ArticleServiceImpl implements ArticleService {
   }
 
   @Override
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  public void failedSummarize(Article article) {
+
+    articleRepository.failedSummary(article);
+  }
+
+  @Override
   @Transactional(readOnly = true)
   public List<Article> findBatchForSummarize(int limit) {
     return articleRepository.findBatchForSummarize(limit);

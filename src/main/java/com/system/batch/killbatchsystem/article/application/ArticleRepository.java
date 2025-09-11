@@ -10,6 +10,8 @@ public interface ArticleRepository {
 
   void completedSummary(Article article);
 
+  void failedSummary(Article article);
+
   List<Article> findBatchForSummarize(Pageable pageable);
 
   default List<Article> findBatchForSummarize(int limit) {

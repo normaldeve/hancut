@@ -7,5 +7,7 @@ public interface ArticleService {
 
   void completeSummarize(Article article);
 
+  void failedSummarize(Article article);
+
   List<Article> findBatchForSummarize(int limit);
 }

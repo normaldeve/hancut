@@ -43,24 +43,44 @@ public class SummarizeTasklet implements Tasklet {
 
     while (processedTotal < maxPerTick) {
       List<Article> batch = articleService.findBatchForSummarize(batchSize);
-      if (batch.isEmpty()) break;
+      if (batch.isEmpty()) {
+        break;
+      }
 
       for (Article a : batch) {
+        boolean created = false;
         try {
-          var req = new CreateSummary(a.content(), a.publishedAt(), a.thumbnailUrl(), a.url(), a.sourceName());
+          CreateSummary req = new CreateSummary(a.content(), a.publishedAt(), a.thumbnailUrl(),
+              a.url(), a.sourceName());
           summaryService.createAIArticle(req);
-          articleService.completeSummarize(a);
-          processedTotal++;
-
-          if (throttleMs > 0) Thread.sleep(throttleMs);
-          if (processedTotal >= maxPerTick) break;
+          created = true;
 
         } catch (Exception e) {
           log.warn("[summarize] failed. articleId={}, err={}", a.id(), e.toString());
+          try {
+            articleService.failedSummarize(a);
+          } catch (Exception e2) {
+            log.error("[summarize] failSummarize failed. articleId={}, err={}", a.id(),
+                e2.toString());
+          }
+        }
+        if (created) {
+          try {
+            articleService.completeSummarize(a);
+            processedTotal++;
+          } catch (Exception e2) {
+            log.error("[summarize] complete failed. articleId={}, err={}", a.id(), e2.toString());
+          }
+        }
+
+        if (throttleMs > 0) {
+          Thread.sleep(throttleMs);
+        }
+        if (processedTotal >= maxPerTick) {
+          break;
         }
       }
     }
-
     if (processedTotal > 0) {
       log.info("[summarize] done. processed={}", processedTotal);
       sseHub.sendToAll("summarize.complete",
