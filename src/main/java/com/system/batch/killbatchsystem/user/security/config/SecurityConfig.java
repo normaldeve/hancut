@@ -46,12 +46,13 @@ public class SecurityConfig {
       CustomAuthenticationProvider customAuthenticationProvider
   ) throws Exception {
     http
-        .csrf(csrf -> csrf.disable())
+        .csrf(cs -> cs.ignoringRequestMatchers("/actuator/**"))
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+            .requestMatchers(HttpMethod.GET, SecurityMatchers.PROMETHEUS).permitAll()
             .requestMatchers(HttpMethod.GET, SecurityMatchers.ACTUATOR).permitAll()
             .requestMatchers(HttpMethod.GET, SecurityMatchers.SSE).permitAll()
             .requestMatchers(HttpMethod.POST, SecurityMatchers.VALIDATE_NICKNAME).permitAll()

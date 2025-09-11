@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  postgres-batch:
+    image: postgres:16
+    container_name: postgres-batch
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: hancut
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hancut -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  hancut-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hancut-backend
+    restart: unless-stopped
+    depends_on:
+      postgres-batch:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-batch:5432/postgres
+      SPRING_DATASOURCE_USERNAME: hancut
+      SPRING_DATASOURCE_PASSWORD: secret
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      SECURITY_JWT_SECRET: ${SECURITY_JWT_SECRET}
+      ADMIN_NICKNAME: ${ADMIN_NICKNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      BUCKET_NAME: ${BUCKET_NAME}
+
+      JAVA_OPTS: "-Xms512m -Xmx1024m"
+    volumes:
+      - app_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - hancut-app
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  app_logs:
+    driver: local
+  pgdata:
+    driver: local
+  grafana-storage:
+    driver: local

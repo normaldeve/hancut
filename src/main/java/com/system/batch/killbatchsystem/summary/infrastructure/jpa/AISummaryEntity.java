@@ -33,10 +33,13 @@ public class AISummaryEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(length = 255, nullable = false)
   private String title;
 
+  @Column(length = 64, nullable = false)
   private String league;
 
+  @Column(length = 64, nullable = false)
   private String team;
 
   @JdbcTypeCode(SqlTypes.JSON)
@@ -49,10 +52,13 @@ public class AISummaryEntity {
 
   LocalDateTime publishedAt;
 
+  @Column(length = 2048, nullable = false)
   String thumbnailUrl;
 
+  @Column(length = 2048, nullable = false)
   String url;
 
+  @Column(length = 64, nullable = false)
   String sourceName;
 
   @Builder

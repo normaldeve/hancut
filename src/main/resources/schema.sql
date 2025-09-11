@@ -20,15 +20,15 @@ create table if not exists articles (
 create table if not exists ai_summary (
                                            id             bigserial primary key,
 
-                                           title          varchar(255),
-                                           league         varchar(64),
-                                           team           varchar(64),
+                                           title          varchar(255) not null,
+                                           league         varchar(64) not null,
+                                           team           varchar(64) not null,
 
-                                           contents       jsonb,              -- @JdbcTypeCode(SqlTypes.JSON)
-                                           published_at   timestamp,
-                                           thumbnail_url  varchar(2048),
-                                           url            varchar(2048),
-                                           source_name      varchar(64)
+                                           contents       jsonb not null,              -- @JdbcTypeCode(SqlTypes.JSON)
+                                           published_at   timestamp not null,
+                                           thumbnail_url  varchar(2048) not null,
+                                           url            varchar(2048) not null,
+                                           source_name      varchar(64) not null
 );
 
 -- ===== @ElementCollection: keywords =====

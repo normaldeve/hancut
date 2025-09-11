@@ -4,6 +4,7 @@ import com.system.batch.killbatchsystem.article.domain.Article;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -13,7 +14,7 @@ public class ArticleServiceImpl implements ArticleService {
   private final ArticleRepository articleRepository;
 
   @Override
-  @Transactional
+  @Transactional(propagation = Propagation.REQUIRES_NEW)
   public void completeSummarize(Article article) {
 
     articleRepository.completedSummary(article);

@@ -47,7 +47,6 @@ public class NaverCrawlJobConfig {
           @Override
           public ExitStatus afterStep(org.springframework.batch.core.StepExecution se) {
             int r = (int) se.getReadCount(), w = (int) se.getWriteCount();
-            // 읽은 URL이 0이면 실패로 종료(빠른 인지)
             return (r == 0) ? ExitStatus.FAILED : se.getExitStatus();
           }
         })

@@ -11,6 +11,7 @@ public final class SecurityMatchers {
   private SecurityMatchers() {}
 
   // 공개(permitAll)로 두려는 엔드포인트 상수
+  public static final String PROMETHEUS = "/actuator/prometheus";
   public static final String ACTUATOR = "/actuator/metrics/**";
   public static final String SSE = "/api/notifications/stream";
   public static final String VALIDATE_NICKNAME = "/auth/validate-nickname";
@@ -19,11 +20,11 @@ public final class SecurityMatchers {
   public static final String LOGIN   = "/auth/login";
   public static final String LOGOUT  = "/auth/logout";
   public static final String REFRESH = "/auth/refresh";
-  public static final String CSRF    = "/api/auth/csrf-token";
   public static final String SUMMARY = "/summary/**";
 
   // 공개 엔드포인트 매처 (메서드까지 명시)
   private static final List<RequestMatcher> PUBLIC_MATCHERS = List.of(
+      new AntPathRequestMatcher(PROMETHEUS,   HttpMethod.GET.name()),
       new AntPathRequestMatcher(ACTUATOR,   HttpMethod.GET.name()),
       new AntPathRequestMatcher(SSE,   HttpMethod.GET.name()),
       new AntPathRequestMatcher(VALIDATE_NICKNAME,   HttpMethod.POST.name()),
@@ -32,7 +33,6 @@ public final class SecurityMatchers {
       new AntPathRequestMatcher(LOGIN,   HttpMethod.POST.name()),
       new AntPathRequestMatcher(LOGOUT,  HttpMethod.POST.name()),
       new AntPathRequestMatcher(REFRESH, HttpMethod.POST.name()),
-      new AntPathRequestMatcher(CSRF,    HttpMethod.GET.name()),
       new AntPathRequestMatcher(SUMMARY, HttpMethod.GET.name())
   );
 
