@@ -99,3 +99,8 @@ management:
     web:
       exposure:
         include: metrics, health, prometheus
+
+logging:
+  level:
+    org.springframework.beans.factory: DEBUG
+    io.jsonwebtoken: DEBUG
