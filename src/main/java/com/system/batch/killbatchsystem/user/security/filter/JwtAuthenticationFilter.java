@@ -35,7 +35,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   ) throws ServletException, IOException {
 
     final String uri = request.getRequestURI();
+    final String method = request.getMethod();
     log.info("JWT 필터 진입 - [{}] {}", request.getMethod(), uri);
+
+    if ("OPTIONS".equals(method)) {
+      log.info("OPTIONS 요청 - 인증 스킵: {}", uri);
+      chain.doFilter(request, response);
+      return;
+    }
 
     if (SecurityMatchers.isPublic(request)) {
       log.info("공개 경로: 인증 스킵 - {}", uri);

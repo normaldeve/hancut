@@ -15,6 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -46,7 +47,8 @@ public class SecurityConfig {
       CustomAuthenticationProvider customAuthenticationProvider
   ) throws Exception {
     http
-        .csrf(cs -> cs.ignoringRequestMatchers("/actuator/**"))
+        .csrf(cs -> cs.disable())
+        .cors(Customizer.withDefaults())
         .formLogin(AbstractHttpConfigurer::disable)
         .httpBasic(AbstractHttpConfigurer::disable)
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

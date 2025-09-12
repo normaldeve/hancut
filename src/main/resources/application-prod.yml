@@ -1,2 +1,14 @@
+spring:
+  application:
+    name: kill-batch-system
+  datasource:
+    url: ${DATABASE_URL}
+    driver-class-name: org.postgresql.Driver
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
 cors:
   allowed-origins: ${ALLOWED_ORIGINS}

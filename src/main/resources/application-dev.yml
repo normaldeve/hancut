@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: kill-batch-system
+  datasource:
+    url: jdbc:postgresql://postgres-batch:5432/postgres
+    driver-class-name: org.postgresql.Driver
+    username: hancut
+    password: secret
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+cors:
+  allowed-origins: localhost:3000
