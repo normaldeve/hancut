@@ -13,7 +13,7 @@ spring:
       enabled: false
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate.jdbc.batch_size: 50
       hibernate.order_inserts: true
@@ -30,6 +30,9 @@ spring:
     password: ${DATABASE_PASSWORD}
   config:
     import: optional:file:.env[.properties]
+  profiles:
+    active:
+      - prod
 
 openai:
   api-key: ${OPENAI_API_KEY}
@@ -81,9 +84,9 @@ cloud:
 
 scheduler:
   naver:
-    cron: "0 10 * * * *"
+    cron: "0 10 */4 * * *"
   goal:
-    cron: "0 30 */2 * * *"
+    cron: "0 30 */6 * * *"
   espn:
     cron: "0 30 */12 * * *"
 
@@ -99,8 +102,3 @@ management:
     web:
       exposure:
         include: metrics, health, prometheus
-
-logging:
-  level:
-    org.springframework.beans.factory: DEBUG
-    io.jsonwebtoken: DEBUG
