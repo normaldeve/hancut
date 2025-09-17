@@ -24,7 +24,7 @@ spring:
     import: optional:file:.env[.properties]
   profiles:
     active:
-      - dev
+      - prod
 
 openai:
   api-key: ${OPENAI_API_KEY}
