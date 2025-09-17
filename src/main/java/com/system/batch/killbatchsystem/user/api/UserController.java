@@ -1,17 +1,14 @@
 package com.system.batch.killbatchsystem.user.api;
 
 import com.system.batch.killbatchsystem.summary.domain.UserSearchCond;
-import com.system.batch.killbatchsystem.user.application.valid.NicknameValidService;
 import com.system.batch.killbatchsystem.user.application.UserService;
 import com.system.batch.killbatchsystem.user.domain.CreateUser;
 import com.system.batch.killbatchsystem.user.domain.Role;
 import com.system.batch.killbatchsystem.user.domain.User;
 import com.system.batch.killbatchsystem.user.domain.UserResponse;
-import com.system.batch.killbatchsystem.user.domain.ValidNickname;
 import com.system.batch.killbatchsystem.user.security.domain.UpdateUserRequest;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.query.criteria.HibernateCriteriaBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -32,13 +29,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
   private final UserService userService;
 
-  @PostMapping("/users")
+  @PostMapping
   public ResponseEntity<User> createUser(@Validated @RequestBody CreateUser request) {
     User user = userService.createUser(request);
 
@@ -46,7 +43,7 @@ public class UserController {
         .body(user);
   }
 
-  @GetMapping("/users")
+  @GetMapping
   public ResponseEntity<Page<UserResponse>> search(
       @RequestParam(required = false) String nickname,
       @RequestParam(required = false) Role role,
@@ -60,7 +57,7 @@ public class UserController {
   }
 
   @PatchMapping(
-      path = "/users/{nickname}",
+      path = "{nickname}",
       consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}
   )
   public ResponseEntity<UserResponse> update(
