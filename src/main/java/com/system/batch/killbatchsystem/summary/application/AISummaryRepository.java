@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.application;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
 import com.system.batch.killbatchsystem.summary.infrastructure.jpa.SortBy;
@@ -17,6 +18,6 @@ public interface AISummaryRepository {
 
   List<TopKeyword> findTopKeywords(Pageable pageable);
 
-  Page<AISummary> findPage(@Nullable String keyword, @Nullable String sourceName, Pageable pageable, SortBy sortBy);
+  Page<AISummary> findPage(@Nullable String keyword, @Nullable ArticleSource sourceName, Pageable pageable, SortBy sortBy);
 
 }

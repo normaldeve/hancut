@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.application;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.CreateSummary;
 import com.system.batch.killbatchsystem.summary.domain.GetAISummary;
@@ -18,6 +19,6 @@ public interface SummaryService {
 
   List<TopKeyword> topKeywords(int limit);
 
-  Page<GetAISummary> getArticles(@Nullable String keyword, @Nullable String sourceName, Pageable pageable, SortBy sortBy);
+  Page<GetAISummary> getArticles(@Nullable String keyword, @Nullable ArticleSource sourceName, Pageable pageable, SortBy sortBy);
 
 }

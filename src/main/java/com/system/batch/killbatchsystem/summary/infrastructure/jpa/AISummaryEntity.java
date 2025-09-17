@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.infrastructure.jpa;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
@@ -59,11 +60,11 @@ public class AISummaryEntity {
   String url;
 
   @Column(length = 64, nullable = false)
-  String sourceName;
+  ArticleSource sourceName;
 
   @Builder
   public AISummaryEntity(String title, String league, String team, List<String> contents,
-      List<String> keyword, LocalDateTime publishedAt, String thumbnailUrl, String url, String sourceName) {
+      List<String> keyword, LocalDateTime publishedAt, String thumbnailUrl, String url, ArticleSource sourceName) {
     this.title = title;
     this.league = league;
     this.team = team;

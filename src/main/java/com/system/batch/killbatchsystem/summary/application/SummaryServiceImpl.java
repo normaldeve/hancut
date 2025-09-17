@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.application;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.CreateSummary;
 import com.system.batch.killbatchsystem.summary.domain.GetAISummary;
@@ -53,7 +54,7 @@ public class SummaryServiceImpl implements SummaryService {
 
   @Override
   @Transactional(readOnly = true)
-  public Page<GetAISummary> getArticles(@Nullable String keyword, @Nullable String sourceName,
+  public Page<GetAISummary> getArticles(@Nullable String keyword, @Nullable ArticleSource sourceName,
       Pageable pageable, SortBy sortBy) {
     Page<AISummary> page = aiSummaryRepository.findPage(keyword, sourceName, pageable, sortBy);
     return page.map(summary -> {

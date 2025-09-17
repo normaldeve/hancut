@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.infrastructure;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
 import com.system.batch.killbatchsystem.summary.infrastructure.jpa.AISummaryEntity;
@@ -39,7 +40,7 @@ public class AISummaryRepositoryImpl implements AISummaryRepository {
   }
 
   @Override
-  public Page<AISummary> findPage(String keyword, String sourceName, Pageable pageable, SortBy sortBy) {
+  public Page<AISummary> findPage(String keyword, ArticleSource sourceName, Pageable pageable, SortBy sortBy) {
     return aiSummaryJpaRepository.findPage(keyword, sourceName, pageable, sortBy)
         .map(AISummaryEntity::toModel);
   }

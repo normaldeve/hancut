@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.domain;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;
@@ -15,7 +16,7 @@ public record AISummary(
     LocalDateTime publishedAt,
     String thumbnailUrl,
     String url,
-    String sourceName
+    ArticleSource sourceName
 ) {
 
   public static AISummary createSummary(SummaryContent s, CreateSummary c) {

@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.comment.infrastructure.jpa.QCommentEntity;
 import com.system.batch.killbatchsystem.reaction.domain.ReactionType;
 import com.system.batch.killbatchsystem.reaction.infrastructure.jpa.QReactionEntity;
@@ -64,7 +65,7 @@ public class AISummaryQueryRepositoryImpl implements AISummaryQueryRepository {
   }
 
   @Override
-  public Page<AISummaryEntity> findPage(String keyword, String sourceName, Pageable pageable,
+  public Page<AISummaryEntity> findPage(String keyword, ArticleSource sourceName, Pageable pageable,
       SortBy sortBy) {
     BooleanBuilder where = buildWhereCondition(keyword, sourceName);
 
@@ -120,14 +121,14 @@ public class AISummaryQueryRepositoryImpl implements AISummaryQueryRepository {
     return new PageImpl<>(content, pageable, total);
   }
 
-  private BooleanBuilder buildWhereCondition(String keyword, String sourceName) {
+  private BooleanBuilder buildWhereCondition(String keyword, ArticleSource sourceName) {
     BooleanBuilder where = new BooleanBuilder();
 
     if (keyword != null && !keyword.isBlank()) {
       where.and(aISummaryEntity.keyword.any().eq(keyword.trim()));
     }
-    if (sourceName != null && !sourceName.isBlank()) {
-      where.and(aISummaryEntity.sourceName.equalsIgnoreCase(sourceName.trim()));
+    if (sourceName != null) {
+      where.and(aISummaryEntity.sourceName.eq(sourceName));
     }
 
     return where;

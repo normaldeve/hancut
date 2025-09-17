@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.api;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.GetAISummary;
 import com.system.batch.killbatchsystem.summary.domain.PageResponse;
 import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
@@ -28,7 +29,7 @@ public class SummaryController {
   @GetMapping
   public ResponseEntity<PageResponse<GetAISummary>> getArticles(
       @RequestParam(required = false) String keyword,
-      @RequestParam(required = false) String sourceName,
+      @RequestParam(required = false) ArticleSource sourceName,
       @RequestParam(name = "sortBy", defaultValue = "LATEST") SortBy sortBy,
       @PageableDefault(size = 20, sort = "publishedAt") Pageable pageable
   ) {

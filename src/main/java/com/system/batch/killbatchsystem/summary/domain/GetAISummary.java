@@ -1,5 +1,6 @@
 package com.system.batch.killbatchsystem.summary.domain;
 
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public record GetAISummary(
     String team,
     String thumbnailUrl,
     String url,
-    String sourceName
+    ArticleSource sourceName
 ) {
 
   public static GetAISummary fromArticle(AISummary aiSummary) {
