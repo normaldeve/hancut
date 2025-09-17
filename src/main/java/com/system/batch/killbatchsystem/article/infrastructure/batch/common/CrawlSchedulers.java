@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 public class CrawlSchedulers {
 
   private final JobLauncher jobLauncher;
-  private final Job crawlNaverSoccerJob;
+  private final Job crawlBBCJob;
   private final Job crawlEspnEplJob;
   private final Job crawlGoalNewsJob;
 
-  @Scheduled(cron = "${scheduler.naver.cron}", zone = "Asia/Seoul")
-  public void runNaver() {
-    run(crawlNaverSoccerJob, "naver");
+  @Scheduled(cron = "${scheduler.bbc.cron}", zone = "Asia/Seoul")
+  public void runBBC() {
+    run(crawlBBCJob, "bbc");
   }
 
   @Scheduled(cron = "${scheduler.goal.cron}", zone = "Asia/Seoul")

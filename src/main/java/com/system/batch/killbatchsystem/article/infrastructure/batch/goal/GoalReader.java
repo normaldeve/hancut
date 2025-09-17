@@ -1,10 +1,15 @@
 package com.system.batch.killbatchsystem.article.infrastructure.batch.goal;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
 
 @Slf4j
-public class GoalNewsSitemapReader implements ItemReader<String> {
+@RequiredArgsConstructor
+public class GoalReader implements ItemReader<String> {
+
+  private final String espnUrl;
+  private final int limit;
 
   @Override
   public String read() throws Exception {

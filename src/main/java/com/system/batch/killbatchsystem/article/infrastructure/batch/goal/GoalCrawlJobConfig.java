@@ -8,7 +8,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,25 +23,23 @@ public class GoalCrawlJobConfig {
   private final JobRepository jobRepository;
 
   @Bean
-  public Job crawlGoalNewsJob(
-      Step listToArticleStepForGoal
+  public Job crawlGoalJob(
+      Step crawlGoalStep
   ) {
-    return new JobBuilder("crawlGoalNewsJob", jobRepository)
-        .start(listToArticleStepForGoal)
+    return new JobBuilder("crawlGoalJob", jobRepository)
+        .start(crawlGoalStep)
         .next(goalSummarizeStep())
         .build();
   }
 
   @Bean
-  public Step listToArticleStepForGoal(
-      GoalNewsSitemapReader goalNewsSitemapReader,                // Reader: GoalSitemapItem
-      ItemProcessor<GoalSitemapItem, Article> goalArticleProcessor, // Processor: sitemap-aware
+  public Step crawlGoalStep(
+      ItemReader<String> goalReader,
       ItemWriter<Article> articleItemWriter
   ) {
-    return new StepBuilder("listToArticleStepForGoal", jobRepository)
-        .<GoalSitemapItem, Article>chunk(20, tx)
-        .reader(goalNewsSitemapReader)
-        .processor(goalArticleProcessor)
+    return new StepBuilder("crawlGoalStep", jobRepository)
+        .<String, Article>chunk(20, tx)
+        .reader(goalReader)
         .writer(articleItemWriter)
         .faultTolerant()
         .retry(Exception.class).retryLimit(3)

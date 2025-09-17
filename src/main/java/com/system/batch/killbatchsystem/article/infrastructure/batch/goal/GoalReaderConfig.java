@@ -1,19 +1,20 @@
 package com.system.batch.killbatchsystem.article.infrastructure.batch.goal;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
-public class GoalSitemapReaderConfig {
+public class GoalReaderConfig {
 
   @Bean
   @StepScope
-  public GoalNewsSitemapReader goalNewsSitemapReader(
-      @Value("${goal.article-url}") String sitemapUrl,
-      @Value("${goal.limit}") int limit
+  public ItemReader<String> goalReader(
+      @Value("${article.goal.kr-url}") String goalKrUrl,
+      @Value("${article.limit}") int limit
   ) {
-    return new GoalNewsSitemapReader(sitemapUrl, limit);
+    return new GoalReader(goalKrUrl, limit);
   }
 }

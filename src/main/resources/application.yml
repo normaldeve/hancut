@@ -36,12 +36,13 @@ summary:
     max-per-tick: 200       # 한 번 실행에서 최대 처리 총량 (여러 배치 루프)
     throttle-ms: 300        # OpenAI 호출 사이 간격 (과금/레이트리밋 대비)
 
-espn:
-  article-url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
-  limit: 20
-
-goal:
-  article-url: "https://www.goal.com/kr/google-news/page"
+article:
+  espn:
+    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
+  goal:
+    kr-url: "https://www.goal.com/kr/google-news/page"
+  bbc:
+    url: "https://feeds.bbci.co.uk/sport/football/rss.xml"
   limit: 20
 
 security:
@@ -65,12 +66,12 @@ cloud:
       bucket: ${BUCKET_NAME}
 
 scheduler:
-  naver:
-    cron: "0 10 */4 * * *"
+  bbc:
+    cron: "0 10 */3 * * *"
   goal:
-    cron: "0 30 */6 * * *"
+    cron: "0 20 */3 * * *"
   espn:
-    cron: "0 30 */12 * * *"
+    cron: "0 30 */3 * * *"
 
 file:
   upload:
