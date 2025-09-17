@@ -1,10 +1,11 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch.bbc;
+package com.system.batch.killbatchsystem.article.batch.bbc;
+
+import org.assertj.core.api.Assertions;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.NewsCrawler;
+import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
 import java.util.ArrayList;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
@@ -14,7 +15,7 @@ class BBCReaderTest {
 
   @Test
   @DisplayName("BBC Sports에서 축구 기사 3개 가져오기")
-  void bbcReader_fetchAndParse_shouldReturnArticles() throws Exception {
+  void bbcReader_getArticles_success() throws Exception {
     // given
     String feed = "https://feeds.bbci.co.uk/sport/football/rss.xml";
     int limit = 3;
@@ -30,12 +31,12 @@ class BBCReaderTest {
     }
 
     // then
-    assertThat(got).isNotEmpty();
+    Assertions.assertThat(got).isNotEmpty();
 
     Article first = got.get(0);
-    assertThat(first.url()).isNotBlank();
-    assertThat(first.content()).isNotBlank();
-    assertThat(first.publishedAt()).isNotNull();
+    Assertions.assertThat(first.url()).isNotBlank();
+    Assertions.assertThat(first.content()).isNotBlank();
+    Assertions.assertThat(first.publishedAt()).isNotNull();
 
     System.out.println("Fetched " + got.size() + " articles");
     System.out.println("content: " + first.content());

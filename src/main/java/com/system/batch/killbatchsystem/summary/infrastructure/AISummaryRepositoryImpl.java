@@ -1,6 +1,6 @@
 package com.system.batch.killbatchsystem.summary.infrastructure;
 
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
 import com.system.batch.killbatchsystem.summary.infrastructure.jpa.AISummaryEntity;

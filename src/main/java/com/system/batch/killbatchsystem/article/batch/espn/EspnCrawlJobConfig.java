@@ -1,7 +1,7 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch.goal;
+package com.system.batch.killbatchsystem.article.batch.espn;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.SummarizeTasklet;
+import com.system.batch.killbatchsystem.article.batch.common.SummarizeTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -16,40 +16,37 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class GoalCrawlJobConfig {
+public class EspnCrawlJobConfig {
 
   private final SummarizeTasklet summarizeTasklet;
   private final PlatformTransactionManager tx;
   private final JobRepository jobRepository;
 
   @Bean
-  public Job crawlGoalJob(
-      Step crawlGoalStep
-  ) {
-    return new JobBuilder("crawlGoalJob", jobRepository)
-        .start(crawlGoalStep)
-        .next(goalSummarizeStep())
+  public Job crawlEspnEplJob(
+      Step listToArticleStepForEspn,
+      Step goalSummarizeStep) {
+    return new JobBuilder("crawlEspnEplJob", jobRepository)
+        .start(listToArticleStepForEspn)
+        .next(espnSummarizeStep())
         .build();
   }
 
   @Bean
-  public Step crawlGoalStep(
-      ItemReader<String> goalReader,
+  public Step listToArticleStepForEspn(
+      ItemReader<String> espnReader,
       ItemWriter<Article> articleItemWriter
   ) {
-    return new StepBuilder("crawlGoalStep", jobRepository)
+    return new StepBuilder("listToArticleStepForEspn", jobRepository)
         .<String, Article>chunk(20, tx)
-        .reader(goalReader)
+        .reader(espnReader)
         .writer(articleItemWriter)
-        .faultTolerant()
-        .retry(Exception.class).retryLimit(3)
-        .skip(Exception.class).skipLimit(50)
         .build();
   }
 
   @Bean
-  public Step goalSummarizeStep() {
-    return new StepBuilder("goal.summarizeStep", jobRepository)
+  public Step espnSummarizeStep() {
+    return new StepBuilder("espn.summarizeStep", jobRepository)
         .tasklet(summarizeTasklet, tx)
         .build();
   }

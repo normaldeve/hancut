@@ -2,7 +2,7 @@ package com.system.batch.killbatchsystem.article.infrastructure.jpa;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
 import com.system.batch.killbatchsystem.article.domain.SummarizeStatus;
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

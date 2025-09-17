@@ -10,7 +10,7 @@ import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.comment.infrastructure.jpa.QCommentEntity;
 import com.system.batch.killbatchsystem.reaction.domain.ReactionType;
 import com.system.batch.killbatchsystem.reaction.infrastructure.jpa.QReactionEntity;

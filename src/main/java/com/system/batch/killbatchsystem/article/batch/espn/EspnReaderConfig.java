@@ -1,4 +1,4 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch.espn;
+package com.system.batch.killbatchsystem.article.batch.espn;
 
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;

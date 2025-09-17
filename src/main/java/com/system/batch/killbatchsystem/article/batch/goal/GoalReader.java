@@ -1,4 +1,4 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch.goal;
+package com.system.batch.killbatchsystem.article.batch.goal;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

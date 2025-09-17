@@ -1,6 +1,6 @@
 package com.system.batch.killbatchsystem.summary.domain;
 
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import java.time.LocalDateTime;
 
 public record CreateSummary(

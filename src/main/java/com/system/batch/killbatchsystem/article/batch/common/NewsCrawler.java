@@ -1,4 +1,4 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch.common;
+package com.system.batch.killbatchsystem.article.batch.common;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
 import java.util.List;

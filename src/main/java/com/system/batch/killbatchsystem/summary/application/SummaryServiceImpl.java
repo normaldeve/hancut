@@ -1,6 +1,6 @@
 package com.system.batch.killbatchsystem.summary.application;
 
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.CreateSummary;
 import com.system.batch.killbatchsystem.summary.domain.GetAISummary;

@@ -1,8 +1,8 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch.bbc;
+package com.system.batch.killbatchsystem.article.batch.bbc;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.ArticleSource;
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.NewsCrawler;
+import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;

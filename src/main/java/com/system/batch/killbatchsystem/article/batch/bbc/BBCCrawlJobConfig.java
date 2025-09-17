@@ -1,7 +1,7 @@
-package com.system.batch.killbatchsystem.article.infrastructure.batch.bbc;
+package com.system.batch.killbatchsystem.article.batch.bbc;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
-import com.system.batch.killbatchsystem.article.infrastructure.batch.common.SummarizeTasklet;
+import com.system.batch.killbatchsystem.article.batch.common.SummarizeTasklet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
