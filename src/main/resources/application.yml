@@ -37,17 +37,12 @@ summary:
     throttle-ms: 300        # OpenAI 호출 사이 간격 (과금/레이트리밋 대비)
 
 espn:
-  json:
-    epl-url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
+  article-url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
   limit: 20
-  max-items: 20
 
 goal:
-  sitemap-url: "https://www.goal.com/kr/google-news/page"
-  max-items: 20
-  recent-hours: 48
-  throttleMs: 400
-  min-content-length: 180
+  article-url: "https://www.goal.com/kr/google-news/page"
+  limit: 20
 
 security:
   jwt:

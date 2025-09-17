@@ -11,11 +11,9 @@ public class GoalSitemapReaderConfig {
   @Bean
   @StepScope
   public GoalNewsSitemapReader goalNewsSitemapReader(
-      @Value("${goal.sitemap-url:https://www.goal.com/en/google-news/page}") String sitemapUrl,
-      @Value("${goal.max-items:40}") int maxItems,
-      @Value("${goal.recent-hours:48}") int recentHours,
-      @Value("${goal.throttleMs:400}") Integer throttleMs
+      @Value("${goal.article-url}") String sitemapUrl,
+      @Value("${goal.limit}") int limit
   ) {
-    return new GoalNewsSitemapReader(sitemapUrl, maxItems, recentHours, throttleMs);
+    return new GoalNewsSitemapReader(sitemapUrl, limit);
   }
 }

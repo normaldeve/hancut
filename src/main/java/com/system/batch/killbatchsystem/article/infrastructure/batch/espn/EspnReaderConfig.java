@@ -12,11 +12,9 @@ public class EspnReaderConfig {
   @Bean
   @StepScope
   public ItemReader<String> espnEplJsonListReader(
-      @Value("${espn.json.epl-url}") String apiUrl,
-      @Value("${espn.limit:20}") int limit,
-      @Value("${espn.max-items:20}") int maxItems,
-      @Value("${espn.throttleMs:400}") Integer throttleMs
+      @Value("${espn.article-url}") String apiUrl,
+      @Value("${espn.limit}") int limit
   ) {
-    return new EspnEplJsonListReader(apiUrl, limit, maxItems, throttleMs);
+    return new EspnEplJsonListReader(apiUrl, limit);
   }
 }

@@ -45,9 +45,6 @@ public class EspnCrawlJobConfig {
         .reader(espnEplJsonListReader)
         .processor(espnArticleProcessor)
         .writer(articleItemWriter)
-        .faultTolerant()
-        .retry(Exception.class).retryLimit(3)
-        .skip(Exception.class).skipLimit(50)
         .build();
   }
 
