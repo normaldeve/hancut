@@ -24,7 +24,7 @@ spring:
     import: optional:file:.env[.properties]
   profiles:
     active:
-      - prod
+      - dev
 
 openai:
   api-key: ${OPENAI_API_KEY}
@@ -35,11 +35,6 @@ summary:
     batch-size: 2          # 한 번 실행당 가져올 건수
     max-per-tick: 200       # 한 번 실행에서 최대 처리 총량 (여러 배치 루프)
     throttle-ms: 300        # OpenAI 호출 사이 간격 (과금/레이트리밋 대비)
-
-crawler:
-  throttleMs: 200
-  list:
-    wfootball: "https://m.sports.naver.com/wfootball/news/list?date={date}&page={page}"
 
 espn:
   json:
@@ -87,7 +82,7 @@ file:
     profiles:
       path: profiles/images/
       allowed-extensions: jpg,jpeg,png,gif,webp
-      max-size: 5242880
+      max-size: 1048576 # 1MB (1024*1024)
 
 management:
   endpoints:

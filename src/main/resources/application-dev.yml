@@ -2,13 +2,14 @@ spring:
   application:
     name: kill-batch-system
   datasource:
-    url: jdbc:postgresql://postgres-batch:5432/postgres
-    driver-class-name: org.postgresql.Driver
-    username: hancut
-    password: secret
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
 
 cors:
   allowed-origins: localhost:3000
