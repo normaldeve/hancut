@@ -1,9 +1,11 @@
 package com.system.batch.killbatchsystem.article.infrastructure.batch.bbc;
 
 import com.system.batch.killbatchsystem.article.domain.Article;
+import com.system.batch.killbatchsystem.article.infrastructure.batch.common.NewsCrawler;
 import java.util.ArrayList;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -11,11 +13,13 @@ import org.springframework.test.context.ActiveProfiles;
 class BBCReaderTest {
 
   @Test
+  @DisplayName("BBC Sports에서 축구 기사 3개 가져오기")
   void bbcReader_fetchAndParse_shouldReturnArticles() throws Exception {
     // given
     String feed = "https://feeds.bbci.co.uk/sport/football/rss.xml";
     int limit = 3;
-    BBCReader reader = new BBCReader(feed, limit);
+    NewsCrawler newsCrawler = new BBCNewsCrawler();
+    BBCReader reader = new BBCReader(newsCrawler, feed, limit);
 
     // when
     List<Article> got = new ArrayList<>();
