@@ -31,10 +31,14 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
-    // ===== AI / External APIs =====
+    // ===== AI  =====
     implementation 'com.openai:openai-java:latest.release'
-    implementation 'org.jsoup:jsoup:1.17.2'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // ===== Crawler  =====
+    implementation 'org.jsoup:jsoup:1.17.2'
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.23.0'
+    testImplementation 'io.github.bonigarcia:webdrivermanager:5.8.0'
 
     // ===== Spring Boot Features =====
     implementation 'org.springframework.boot:spring-boot-starter-actuator'

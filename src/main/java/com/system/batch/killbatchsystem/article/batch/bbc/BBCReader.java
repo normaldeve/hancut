@@ -7,11 +7,13 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
 @RequiredArgsConstructor
 public class BBCReader implements ItemReader<Article> {
 
+  @Qualifier("bbcNewsCrawler")
   private final NewsCrawler newsCrawler;
   private final String url;
   private final int limit;

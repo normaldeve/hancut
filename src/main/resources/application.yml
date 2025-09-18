@@ -40,6 +40,7 @@ article:
   espn:
     url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
   goal:
+    en-url: "https://www.goal.com/en-gb/google-news/page"
     kr-url: "https://www.goal.com/kr/google-news/page"
   bbc:
     url: "https://feeds.bbci.co.uk/sport/football/rss.xml"

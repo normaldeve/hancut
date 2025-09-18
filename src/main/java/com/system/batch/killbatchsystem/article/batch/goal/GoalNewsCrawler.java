@@ -1,8 +1,8 @@
-package com.system.batch.killbatchsystem.article.batch.bbc;
+package com.system.batch.killbatchsystem.article.batch.goal;
 
-import com.system.batch.killbatchsystem.article.domain.Article;
 import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
+import com.system.batch.killbatchsystem.article.domain.Article;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -10,17 +10,20 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
 
+/**
+ * TODO Selenium 사용하여 크롤링 하기
+ */
 @Slf4j
-@Component(value = "bbcNewsCrawler")
-public class BBCNewsCrawler implements NewsCrawler {
+@Component(value = "goalNewsCrawler")
+public class GoalNewsCrawler implements NewsCrawler {
 
   @Override
   public List<Article> getArticles(String url, int limit) throws Exception {
@@ -32,43 +35,34 @@ public class BBCNewsCrawler implements NewsCrawler {
         .get();
 
     List<Article> articles = new ArrayList<>();
-    Elements items = rss.select("item");
+    Elements items = rss.select("url");
     int count = 0;
 
     for (Element element : items) {
       if (count >= limit) {
         break;
       }
-      // 원본 기사 링크
-      String link = text(element.selectFirst("guid"));
 
-      // 기사 id
+      String link = text(element.selectFirst("loc"));
+
       String articleId = null;
       if (link != null && !link.isBlank()) {
         articleId = link.substring(link.lastIndexOf("/") + 1);
+      }
 
-        // 뒤에 # 붙어 있는 부분 제거
-        int hashIndex = articleId.indexOf('#');
-        if (hashIndex != -1) {
-          articleId = articleId.substring(0, hashIndex);
+      String pubDateStr = text(element.selectFirst("news|publication_date"));
+      LocalDateTime publishedAt = LocalDateTime.now();
+      if (pubDateStr != null && !pubDateStr.isBlank()) {
+        try {
+          ZonedDateTime zdt = ZonedDateTime.parse(pubDateStr, DateTimeFormatter.ISO_DATE_TIME);
+          publishedAt = zdt.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        } catch (Exception e) {
+          log.warn("날짜 파싱 실패: {}", pubDateStr, e);
         }
       }
 
-      // 발행 일자를 LocalDateTime으로 변환하고 한국 날짜로 저장
-      String pubDateStr = text(element.selectFirst("pubDate"));
-      LocalDateTime publishedAt = LocalDateTime.now();
-      if (pubDateStr != null && !pubDateStr.isBlank()) {
-        ZonedDateTime zonedDateTime = ZonedDateTime.parse(pubDateStr,
-            DateTimeFormatter.RFC_1123_DATE_TIME);
-        publishedAt = zonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-      } else {
-        log.warn("발행 시간을 찾을 수 없습니다: {}", element);
-      }
+      String thumbnailUrl = text(element.selectFirst("image|loc"));
 
-      // 썸네일 이미지 URL
-      String thumbnailUrl = attr(element.selectFirst("media|thumbnail")); // 링크 형식
-
-      // 만일 원본 링크가 없다면 본문을 가져올 수 없다
       if (link == null || link.isBlank()) continue;
 
       Document doc = Jsoup.connect(link)
@@ -77,10 +71,9 @@ public class BBCNewsCrawler implements NewsCrawler {
           .timeout(15000)
           .get();
 
+      if (!link.contains("lists")) continue;
+
       String content = doc.select("article p").stream()
-          .filter(p ->
-              p.closest("aside, figure, [data-component=links-block], [data-component=image-block]")
-                  == null)
           .map(Element::text)
           .map(String::trim)
           .filter(s -> !s.isEmpty())
@@ -92,7 +85,7 @@ public class BBCNewsCrawler implements NewsCrawler {
           link,
           content,
           thumbnailUrl,
-          ArticleSource.BBC,
+          ArticleSource.GOAL_ENG,
           publishedAt
       );
 
@@ -103,13 +96,7 @@ public class BBCNewsCrawler implements NewsCrawler {
     return articles;
   }
 
-  // text 가져오기
   private String text(Element element) {
     return element == null ? null : element.text();
-  }
-
-  // attribute 가져오기
-  private String attr(Element element) {
-    return element == null ? null : element.attr("url");
   }
 }

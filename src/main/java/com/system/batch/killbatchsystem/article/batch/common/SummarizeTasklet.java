@@ -40,6 +40,7 @@ public class SummarizeTasklet implements Tasklet {
   public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext)
       throws Exception {
     int processedTotal = 0;
+    ArticleSource articleSource = null;
 
     while (processedTotal < maxPerTick) {
       List<Article> batch = articleService.findBatchForSummarize(batchSize);
@@ -54,6 +55,7 @@ public class SummarizeTasklet implements Tasklet {
               a.url(), a.sourceName());
           summaryService.createAIArticle(req);
           created = true;
+          articleSource = a.sourceName();
 
         } catch (Exception e) {
           log.warn("[summarize] failed. articleId={}, err={}", a.id(), e.toString());
@@ -84,7 +86,7 @@ public class SummarizeTasklet implements Tasklet {
     if (processedTotal > 0) {
       log.info("[summarize] done. processed={}", processedTotal);
       sseHub.sendToAll("summarize.complete",
-          new SummarizeCompletePayload(processedTotal, Instant.now().toString()));
+          new SummarizeCompletePayload(articleSource, processedTotal, Instant.now().toString()));
     } else {
       log.info("[summarize] no work to do.");
     }

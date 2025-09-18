@@ -1,36 +1,35 @@
-package com.system.batch.killbatchsystem.article.batch.bbc;
+package com.system.batch.killbatchsystem.article.batch.goal;
 
-import org.assertj.core.api.Assertions;
-
-import com.system.batch.killbatchsystem.article.domain.Article;
 import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
+import com.system.batch.killbatchsystem.article.domain.Article;
 import java.util.ArrayList;
 import java.util.List;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
-class BBCReaderTest {
+class GoalReaderTest {
 
   @Test
-  @DisplayName("BBC Sports에서 축구 기사 3개 가져오기")
-  void bbcReader_getArticles_success() throws Exception {
-    // given
-    String feed = "https://feeds.bbci.co.uk/sport/football/rss.xml";
+  @DisplayName("Goal Sports에서 축구 기사 3개 가져오기")
+  void goalReader_getArticles_success() throws Exception {
+    //given
+    String feed = "https://www.goal.com/en-gb/google-news/page";
     int limit = 3;
-    NewsCrawler newsCrawler = new BBCNewsCrawler();
-    BBCReader reader = new BBCReader(newsCrawler, feed, limit);
+    NewsCrawler crawler = new GoalNewsCrawler();
+    GoalReader reader = new GoalReader(crawler, feed, limit);
 
-    // when
+    //when
     List<Article> articles = new ArrayList<>();
-    for (;;) {
-      Article a = reader.read();
-      if (a == null) break;
-      articles.add(a);
+    for (; ; ) {
+      Article article = reader.read();
+      if (article == null){ break;}
+      articles.add(article);
     }
 
-    // then
+    //then
     Assertions.assertThat(articles).hasSize(limit);
 
     Article first = articles.get(0);
@@ -38,7 +37,7 @@ class BBCReaderTest {
     Assertions.assertThat(first.content()).isNotBlank();
     Assertions.assertThat(first.publishedAt()).isNotNull();
 
-    System.out.println("Fetched " + articles.size() + " articles");
+    System.out.println("Fetched: " + articles.size() + " articles");
     System.out.println("content: " + first.content());
     System.out.println("articleId: " + first.articleId());
     System.out.println("thumbnail:\n" + first.thumbnailUrl());
