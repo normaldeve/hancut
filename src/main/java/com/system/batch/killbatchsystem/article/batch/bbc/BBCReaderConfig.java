@@ -5,15 +5,19 @@ import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@RequiredArgsConstructor
 public class BBCReaderConfig {
 
   private final NewsCrawler newsCrawler;
+
+  public BBCReaderConfig(@Qualifier("bbcNewsCrawler") NewsCrawler newsCrawler) {
+    this.newsCrawler = newsCrawler;
+  }
 
   @Bean
   @StepScope

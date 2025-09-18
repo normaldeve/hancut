@@ -11,11 +11,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
-@RequiredArgsConstructor
 public class GoalReaderConfig {
 
-  @Qualifier("goalNewsCrawler")
   private final NewsCrawler newsCrawler;
+
+  public GoalReaderConfig(@Qualifier("goalNewsCrawler") NewsCrawler newsCrawler) {
+    this.newsCrawler = newsCrawler;
+  }
 
   @Bean
   @StepScope

@@ -6,6 +6,8 @@ import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,10 +24,12 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "ai_summary",
+@Table(
+    name = "ai_summary",
     indexes = {
-        @Index(name = "idx_ai_summary_published_at", columnList = "publishedAt DESC")
-    })
+        @Index(name = "idx_ai_summary_published_at", columnList = "published_at DESC")
+    }
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class AISummaryEntity {
@@ -59,7 +63,8 @@ public class AISummaryEntity {
   @Column(length = 2048, nullable = false)
   String url;
 
-  @Column(length = 64, nullable = false)
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   ArticleSource sourceName;
 
   @Builder

@@ -10,15 +10,19 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
-@RequiredArgsConstructor
 public class BBCReader implements ItemReader<Article> {
 
-  @Qualifier("bbcNewsCrawler")
   private final NewsCrawler newsCrawler;
   private final String url;
   private final int limit;
 
   private Iterator<Article> articleIterator;
+
+  public BBCReader(@Qualifier("bbcNewsCrawler") NewsCrawler newsCrawler, String url, int limit) {
+    this.newsCrawler = newsCrawler;
+    this.url = url;
+    this.limit = limit;
+  }
 
   @Override
   public Article read() throws Exception {

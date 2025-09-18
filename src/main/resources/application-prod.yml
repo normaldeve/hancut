@@ -9,6 +9,11 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
 
 cors:
   allowed-origins: ${ALLOWED_ORIGINS}

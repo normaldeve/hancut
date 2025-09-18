@@ -17,7 +17,7 @@ public class CrawlSchedulers {
   private final JobLauncher jobLauncher;
   private final Job crawlBBCJob;
   private final Job crawlEspnEplJob;
-  private final Job crawlGoalNewsJob;
+  private final Job crawlGoalJob;
 
   @Scheduled(cron = "${scheduler.bbc.cron}", zone = "Asia/Seoul")
   public void runBBC() {
@@ -26,7 +26,7 @@ public class CrawlSchedulers {
 
   @Scheduled(cron = "${scheduler.goal.cron}", zone = "Asia/Seoul")
   public void runGoal() {
-    run(crawlGoalNewsJob, "goal");
+    run(crawlGoalJob, "goal");
   }
 
   @Scheduled(cron = "${scheduler.espn.cron}", zone = "Asia/Seoul")

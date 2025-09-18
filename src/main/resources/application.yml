@@ -6,11 +6,6 @@ spring:
       mode: always
       schema-locations:
         - classpath:org/springframework/batch/core/schema-drop-postgresql.sql
-  batch:
-    jdbc:
-      initialize-schema: always
-    job:
-      enabled: false
     properties:
       hibernate.jdbc.batch_size: 50
       hibernate.order_inserts: true

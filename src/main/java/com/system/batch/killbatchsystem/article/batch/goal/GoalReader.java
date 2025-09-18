@@ -10,13 +10,17 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Slf4j
-@RequiredArgsConstructor
 public class GoalReader implements ItemReader<Article> {
 
-  @Qualifier("goalNewsCrawler")
   private final NewsCrawler newsCrawler;
   private final String url;
   private final int limit;
+
+  public GoalReader(@Qualifier("goalNewsCrawler") NewsCrawler newsCrawler, String url, int limit) {
+    this.newsCrawler = newsCrawler;
+    this.url = url;
+    this.limit = limit;
+  }
 
   private Iterator<Article> articleIterator;
 

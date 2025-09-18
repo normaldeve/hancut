@@ -48,7 +48,8 @@ public class ArticleEntity {
   @Column(length = 2048)
   private String thumbnailUrl;
 
-  @Column(length = 64)
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private ArticleSource sourceName;
 
   @Column(nullable = false)
