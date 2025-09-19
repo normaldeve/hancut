@@ -34,11 +34,11 @@ public class EspnCrawlJobConfig {
 
   @Bean
   public Step listToArticleStepForEspn(
-      ItemReader<String> espnReader,
+      ItemReader<Article> espnReader,
       ItemWriter<Article> articleItemWriter
   ) {
     return new StepBuilder("listToArticleStepForEspn", jobRepository)
-        .<String, Article>chunk(20, tx)
+        .<Article, Article>chunk(20, tx)
         .reader(espnReader)
         .writer(articleItemWriter)
         .build();

@@ -6,15 +6,6 @@ spring:
       mode: always
       schema-locations:
         - classpath:org/springframework/batch/core/schema-drop-postgresql.sql
-    properties:
-      hibernate.jdbc.batch_size: 50
-      hibernate.order_inserts: true
-      hibernate.order_updates: true
-      hibernate.show_sql: true                    # SQL 출력
-      hibernate.format_sql: true                  # SQL 포맷팅
-      hibernate.use_sql_comments: true            # 어떤 엔티티에서 실행된 SQL인지 주석 표시
-      hibernate.highlight_sql: true              # SQL 구문 하이라이팅 (콘솔에서)
-      hibernate.type.descriptor.sql.BasicBinder: TRACE  # 파라미터 값까지 출력
   config:
     import: optional:file:.env[.properties]
   profiles:
@@ -33,13 +24,14 @@ summary:
 
 article:
   espn:
-    url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
+    epl-url: "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news"
+    esp-url: "https://site.api.espn.com/apis/site/v2/sports/soccer/esp.1/news"
   goal:
     en-url: "https://www.goal.com/en-gb/google-news/page"
     kr-url: "https://www.goal.com/kr/google-news/page"
   bbc:
     url: "https://feeds.bbci.co.uk/sport/football/rss.xml"
-  limit: 20
+  limit: 40
 
 security:
   jwt:

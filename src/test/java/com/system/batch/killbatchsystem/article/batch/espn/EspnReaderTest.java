@@ -1,4 +1,4 @@
-package com.system.batch.killbatchsystem.article.batch.goal;
+package com.system.batch.killbatchsystem.article.batch.espn;
 
 import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
 import com.system.batch.killbatchsystem.article.domain.Article;
@@ -10,21 +10,21 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
-class GoalReaderTest {
+class EspnReaderTest {
 
   @Test
-  @DisplayName("Goal Sports에서 축구 기사 1개 가져오기")
-  void goalReader_getArticles_success() throws Exception {
+  @DisplayName("ESPN Sports에서 축구 기사 1개 가져오기")
+  void espnReader_getArticles_success() throws Exception {
     //given
-    String feed = "https://www.goal.com/en-gb/google-news/page";
+    String feed = "https://site.api.espn.com/apis/site/v2/sports/soccer/eng.1/news";
     int limit = 1;
-    NewsCrawler crawler = new GoalNewsCrawler();
-    GoalReader goalReader = new GoalReader(crawler, feed, limit);
+    NewsCrawler newsCrawler = new EspnNewsCrawler();
+    EspnReader espnReader = new EspnReader(newsCrawler, feed, limit);
 
     //when
     List<Article> articles = new ArrayList<>();
     for (; ; ) {
-      Article article = goalReader.read();
+      Article article = espnReader.read();
       if (article == null){ break;}
       articles.add(article);
     }

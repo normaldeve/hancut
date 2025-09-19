@@ -3,24 +3,29 @@ package com.system.batch.killbatchsystem.article.batch.goal;
 import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
 import com.system.batch.killbatchsystem.article.domain.Article;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 
-/**
- * TODO Selenium 사용하여 크롤링 하기
- */
 @Slf4j
 @Component(value = "goalNewsCrawler")
 public class GoalNewsCrawler implements NewsCrawler {
@@ -51,19 +56,12 @@ public class GoalNewsCrawler implements NewsCrawler {
       }
 
       String pubDateStr = text(element.selectFirst("news|publication_date"));
-      LocalDateTime publishedAt = LocalDateTime.now();
-      if (pubDateStr != null && !pubDateStr.isBlank()) {
-        try {
-          ZonedDateTime zdt = ZonedDateTime.parse(pubDateStr, DateTimeFormatter.ISO_DATE_TIME);
-          publishedAt = zdt.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-        } catch (Exception e) {
-          log.warn("날짜 파싱 실패: {}", pubDateStr, e);
-        }
-      }
+      LocalDateTime publishedAt = parsePublishedAt(pubDateStr);
 
       String thumbnailUrl = text(element.selectFirst("image|loc"));
 
-      if (link == null || link.isBlank()) continue;
+      if (link == null || link.isBlank())
+        continue;
 
       Document doc = Jsoup.connect(link)
           .userAgent("Mozilla/5.0")
@@ -71,14 +69,10 @@ public class GoalNewsCrawler implements NewsCrawler {
           .timeout(15000)
           .get();
 
-      if (!link.contains("lists")) continue;
+      if (!link.contains("lists"))
+        continue;
 
-      String content = doc.select("article p").stream()
-          .map(Element::text)
-          .map(String::trim)
-          .filter(s -> !s.isEmpty())
-          .distinct()
-          .collect(Collectors.joining("\n\n"));
+      String content = fetchAllBodiesWithSelenium(link);
 
       Article article = Article.createArticle(
           articleId,
@@ -98,5 +92,70 @@ public class GoalNewsCrawler implements NewsCrawler {
 
   private String text(Element element) {
     return element == null ? null : element.text();
+  }
+
+  // String -> LocalDateTime 변환
+  private LocalDateTime parsePublishedAt(String pubDateStr) {
+    LocalDateTime publishedAt = LocalDateTime.now();
+    if (pubDateStr != null && !pubDateStr.isBlank()) {
+      try {
+        ZonedDateTime zdt = ZonedDateTime.parse(pubDateStr, DateTimeFormatter.ISO_DATE_TIME);
+        publishedAt = zdt.withZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+      } catch (Exception e) {
+        log.warn("날짜 파싱 실패: {}", pubDateStr, e);
+      }
+    }
+    return publishedAt;
+  }
+
+  private String fetchAllBodiesWithSelenium(String link) {
+    WebDriverManager.chromedriver().setup();
+
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--headless");
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+
+    WebDriver driver = new ChromeDriver(options);
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+    try {
+      driver.get(link);
+
+      StringBuilder contentBuilder = new StringBuilder();
+
+      List<WebElement> teaserElements = driver.findElements(
+          By.cssSelector("[data-testid='article-teaser']")
+      );
+
+      for (WebElement element : teaserElements) {
+        String text = element.getText().trim();
+        if (!text.isEmpty()) {
+          contentBuilder.append(text).append("\n\n");
+        }
+      }
+
+      // article body 가져오기
+      List<WebElement> bodyElements = wait.until(
+          ExpectedConditions.presenceOfAllElementsLocatedBy(
+              By.cssSelector("[data-testid='article-body']")
+          )
+      );
+
+      for (WebElement element : bodyElements) {
+        String text = element.getText().trim();
+        if (!text.isEmpty()) {
+          contentBuilder.append(text).append("\n\n");
+        }
+      }
+
+      return contentBuilder.toString().trim();
+
+    } catch (Exception e) {
+      System.err.println("Article body 요소들을 찾을 수 없습니다: " + e.getMessage());
+      return "";
+    } finally {
+      driver.quit();
+    }
   }
 }

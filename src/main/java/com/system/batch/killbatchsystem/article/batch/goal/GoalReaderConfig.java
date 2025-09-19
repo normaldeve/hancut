@@ -22,9 +22,9 @@ public class GoalReaderConfig {
   @Bean
   @StepScope
   public ItemReader<Article> goalReader(
-      @Value("${article.goal.en-url}") String goalKrUrl,
+      @Value("${article.goal.en-url}") String goalEnUrl,
       @Value("${article.limit}") int limit
   ) {
-    return new GoalReader(newsCrawler, goalKrUrl, limit);
+    return new GoalReader(newsCrawler, goalEnUrl, limit);
   }
 }
