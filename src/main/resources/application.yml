@@ -10,7 +10,7 @@ spring:
     import: optional:file:.env[.properties]
   profiles:
     active:
-      - prod
+      - dev
 
 openai:
   api-key: ${OPENAI_API_KEY}
@@ -31,7 +31,7 @@ article:
     kr-url: "https://www.goal.com/kr/google-news/page"
   bbc:
     url: "https://feeds.bbci.co.uk/sport/football/rss.xml"
-  limit: 40
+  limit: 10
 
 security:
   jwt:
@@ -55,11 +55,12 @@ cloud:
 
 scheduler:
   bbc:
-    cron: "0 10 */3 * * *"
+    cron: "0 40 * * * *"
   goal:
-    cron: "0 20 */3 * * *"
+    cron: "0 34 * * * *"
   espn:
-    cron: "0 30 */3 * * *"
+    epl-cron: "0 43 * * * *"
+    esp-cron: "0 46 * * * *"
 
 file:
   upload:

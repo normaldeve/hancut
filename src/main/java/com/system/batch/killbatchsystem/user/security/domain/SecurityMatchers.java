@@ -20,7 +20,7 @@ public final class SecurityMatchers {
   public static final String LOGIN   = "/auth/login";
   public static final String LOGOUT  = "/auth/logout";
   public static final String REFRESH = "/auth/refresh";
-  public static final String SUMMARY = "/summary/**";
+  public static final String SUMMARY = "/api/summary/**";
 
   // 공개 엔드포인트 매처 (메서드까지 명시)
   private static final List<RequestMatcher> PUBLIC_MATCHERS = List.of(

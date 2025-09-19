@@ -17,7 +17,7 @@ class GoalReaderTest {
   void goalReader_getArticles_success() throws Exception {
     //given
     String feed = "https://www.goal.com/en-gb/google-news/page";
-    int limit = 1;
+    int limit = 3;
     NewsCrawler crawler = new GoalNewsCrawler();
     GoalReader goalReader = new GoalReader(crawler, feed, limit);
 
@@ -32,14 +32,14 @@ class GoalReaderTest {
     //then
     Assertions.assertThat(articles).hasSize(limit);
 
-    Article first = articles.get(0);
-    Assertions.assertThat(first.url()).isNotBlank();
-    Assertions.assertThat(first.content()).isNotBlank();
-    Assertions.assertThat(first.publishedAt()).isNotNull();
+    Article second = articles.get(0);
+    Assertions.assertThat(second.url()).isNotBlank();
+    Assertions.assertThat(second.content()).isNotBlank();
+    Assertions.assertThat(second.publishedAt()).isNotNull();
 
     System.out.println("Fetched: " + articles.size() + " articles");
-    System.out.println("content: " + first.content());
-    System.out.println("articleId: " + first.articleId());
-    System.out.println("thumbnail:\n" + first.thumbnailUrl());
+    System.out.println("content: " + second.content());
+    System.out.println("articleId: " + second.articleId());
+    System.out.println("thumbnail:\n" + second.thumbnailUrl());
   }
 }

@@ -18,4 +18,4 @@ spring:
       enabled: false
 
 cors:
-  allowed-origins: localhost:3000
+  allowed-origins: *

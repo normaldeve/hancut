@@ -20,8 +20,17 @@ public class EspnReaderConfig {
 
   @Bean
   @StepScope
-  public ItemReader<Article> espnReader(
+  public ItemReader<Article> espnEPLReader(
       @Value("${article.espn.epl-url}") String apiUrl,
+      @Value("${article.limit}") int limit
+  ) {
+    return new EspnReader(newsCrawler, apiUrl, limit);
+  }
+
+  @Bean
+  @StepScope
+  public ItemReader<Article> espnLaLigaReader(
+      @Value("${article.espn.esp-url}") String apiUrl,
       @Value("${article.limit}") int limit
   ) {
     return new EspnReader(newsCrawler, apiUrl, limit);

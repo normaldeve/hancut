@@ -17,6 +17,7 @@ public class CrawlSchedulers {
   private final JobLauncher jobLauncher;
   private final Job crawlBBCJob;
   private final Job crawlEspnEplJob;
+  private final Job crawlEspnLaLigaJob;
   private final Job crawlGoalJob;
 
   @Scheduled(cron = "${scheduler.bbc.cron}", zone = "Asia/Seoul")
@@ -29,9 +30,14 @@ public class CrawlSchedulers {
     run(crawlGoalJob, "goal");
   }
 
-  @Scheduled(cron = "${scheduler.espn.cron}", zone = "Asia/Seoul")
-  public void runEspn() {
-    run(crawlEspnEplJob, "goal");
+  @Scheduled(cron = "${scheduler.espn.epl-cron}", zone = "Asia/Seoul")
+  public void runEspnEPL() {
+    run(crawlEspnEplJob, "espn-epl");
+  }
+
+  @Scheduled(cron = "${scheduler.espn.esp-cron}", zone = "Asia/Seoul")
+  public void runEspnLaLiga() {
+    run(crawlEspnLaLigaJob, "espn-laliga");
   }
 
   private void run(Job job, String tag) {

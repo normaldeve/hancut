@@ -14,3 +14,6 @@ spring:
       initialize-schema: always
     job:
       enabled: false
+
+cors:
+  allowed-origins: localhost:3000

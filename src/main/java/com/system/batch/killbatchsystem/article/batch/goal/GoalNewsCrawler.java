@@ -41,50 +41,69 @@ public class GoalNewsCrawler implements NewsCrawler {
 
     List<Article> articles = new ArrayList<>();
     Elements items = rss.select("url");
-    int count = 0;
 
-    for (Element element : items) {
-      if (count >= limit) {
-        break;
+    WebDriverManager.chromedriver().setup();
+    ChromeOptions options = new ChromeOptions();
+    options.addArguments("--headless");
+    options.addArguments("--no-sandbox");
+    options.addArguments("--disable-dev-shm-usage");
+    options.addArguments("--disable-gpu");
+    options.addArguments("--disable-logging");
+    options.addArguments("--log-level=3");
+
+    WebDriver driver = new ChromeDriver(options);
+
+    try {
+      int count = 0;
+
+      for (Element element : items) {
+        if (count >= limit) {
+          break;
+        }
+
+        String link = text(element.selectFirst("loc"));
+
+        String articleId = null;
+        if (link != null && !link.isBlank()) {
+          articleId = link.substring(link.lastIndexOf("/") + 1);
+        }
+
+        String pubDateStr = text(element.selectFirst("news|publication_date"));
+        LocalDateTime publishedAt = parsePublishedAt(pubDateStr);
+
+        String thumbnailUrl = text(element.selectFirst("image|loc"));
+
+        if (link == null || link.isBlank())
+          continue;
+
+        Document doc = Jsoup.connect(link)
+            .userAgent("Mozilla/5.0")
+            .referrer("https://www.google.com")
+            .timeout(15000)
+            .get();
+
+        if (!link.contains("lists"))
+          continue;
+
+        String content = fetchAllBodiesWithSelenium(driver, link);
+
+        Article article = Article.createArticle(
+            articleId,
+            link,
+            content,
+            thumbnailUrl,
+            ArticleSource.GOAL,
+            publishedAt
+        );
+
+        articles.add(article);
+        count++;
       }
-
-      String link = text(element.selectFirst("loc"));
-
-      String articleId = null;
-      if (link != null && !link.isBlank()) {
-        articleId = link.substring(link.lastIndexOf("/") + 1);
+    } finally {
+      if (driver != null) {
+        driver.quit();
+        log.info("WebDriver가 정리되었습니다.");
       }
-
-      String pubDateStr = text(element.selectFirst("news|publication_date"));
-      LocalDateTime publishedAt = parsePublishedAt(pubDateStr);
-
-      String thumbnailUrl = text(element.selectFirst("image|loc"));
-
-      if (link == null || link.isBlank())
-        continue;
-
-      Document doc = Jsoup.connect(link)
-          .userAgent("Mozilla/5.0")
-          .referrer("https://www.google.com")
-          .timeout(15000)
-          .get();
-
-      if (!link.contains("lists"))
-        continue;
-
-      String content = fetchAllBodiesWithSelenium(link);
-
-      Article article = Article.createArticle(
-          articleId,
-          link,
-          content,
-          thumbnailUrl,
-          ArticleSource.GOAL_ENG,
-          publishedAt
-      );
-
-      articles.add(article);
-      count++;
     }
 
     return articles;
@@ -108,15 +127,7 @@ public class GoalNewsCrawler implements NewsCrawler {
     return publishedAt;
   }
 
-  private String fetchAllBodiesWithSelenium(String link) {
-    WebDriverManager.chromedriver().setup();
-
-    ChromeOptions options = new ChromeOptions();
-    options.addArguments("--headless");
-    options.addArguments("--no-sandbox");
-    options.addArguments("--disable-dev-shm-usage");
-
-    WebDriver driver = new ChromeDriver(options);
+  private String fetchAllBodiesWithSelenium(WebDriver driver, String link) {
     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
     try {
@@ -152,10 +163,8 @@ public class GoalNewsCrawler implements NewsCrawler {
       return contentBuilder.toString().trim();
 
     } catch (Exception e) {
-      System.err.println("Article body 요소들을 찾을 수 없습니다: " + e.getMessage());
+      log.warn("Article body 크롤링 실패: {}", link, e);
       return "";
-    } finally {
-      driver.quit();
     }
   }
 }
