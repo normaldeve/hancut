@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaContext;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
 public class ReactionRepositoryImpl implements ReactionRepository {
 
   private final ReactionJpaRepository reactionJpaRepository;
+  private final JpaContext jpaContext;
 
   @Override
   public List<Reaction> findByAiSummaryId(Long aiSummaryId) {
@@ -51,5 +53,10 @@ public class ReactionRepositoryImpl implements ReactionRepository {
         .orElseThrow(() -> new RuntimeException("Can not found reaction"));
 
     reactionEntity.changeType(type);
+  }
+
+  @Override
+  public long countByAiSummaryIdAndType(Long aiSummaryId, ReactionType type) {
+    return reactionJpaRepository.countByAiSummaryIdAndType(aiSummaryId, type);
   }
 }

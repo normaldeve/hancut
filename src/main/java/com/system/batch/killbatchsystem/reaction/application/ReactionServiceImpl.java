@@ -48,10 +48,9 @@ public class ReactionServiceImpl implements ReactionService {
     String userId = request.userId();
     ReactionType type = request.type();
 
+    // 먼저 기존 반응을 조회
     Optional<Reaction> existingReaction = reactionRepository.findByAiSummaryIdAndUserId(
         aiSummaryId, userId);
-
-    Reaction savedReaction = null;
 
     if (existingReaction.isPresent()) {
       Reaction reaction = existingReaction.get();
@@ -66,9 +65,25 @@ public class ReactionServiceImpl implements ReactionService {
     } else {
       log.info("새로운 반응을 생성합니다");
       Reaction newReaction = Reaction.createReaction(request);
-
       reactionRepository.save(newReaction);
     }
-    return getReactions(aiSummaryId, userId);
+
+    return buildReactionResponse(aiSummaryId, userId, existingReaction, type);
+  }
+
+  private ReactionResponse buildReactionResponse(Long aiSummaryId, String userId,
+      Optional<Reaction> existingReaction,
+      ReactionType newType) {
+    // 현재 상태를 기반으로 카운트 계산
+    long currentLikeCount = reactionRepository.countByAiSummaryIdAndType(aiSummaryId, ReactionType.LIKE);
+    long currentDislikeCount = reactionRepository.countByAiSummaryIdAndType(aiSummaryId, ReactionType.DISLIKE);
+
+    Optional<Reaction> currentUserReaction = reactionRepository.findByAiSummaryIdAndUserId(aiSummaryId, userId);
+
+    return ReactionResponse.builder()
+        .likeCount(currentLikeCount)
+        .dislikeCount(currentDislikeCount)
+        .userReaction(currentUserReaction.orElse(null))
+        .build();
   }
 }

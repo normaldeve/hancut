@@ -16,4 +16,6 @@ public interface ReactionRepository {
   void save(Reaction reaction);
 
   void updateType(ReactionType type, Long aiSummaryId, String userId);
+
+  long countByAiSummaryIdAndType(Long aiSummaryId, ReactionType type);
 }
