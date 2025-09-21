@@ -11,4 +11,4 @@ jobs:
       - uses: actions/add-to-project@v0.5.0
         with:
           project-url: https://github.com/users/YOUR_USERNAME/projects/PROJECT_NUMBER
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.SECRET_KEY }}
