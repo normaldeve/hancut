@@ -32,4 +32,4 @@ jobs:
                    "timestamp": "${{ github.event.issue.created_at }}"
                  }]
                }' \
-               "${{ secrets.DISCORD_WEBHOOK }}"
+               "${{ secrets.DISCORD_ISSUE_WEBHOOK }}"
