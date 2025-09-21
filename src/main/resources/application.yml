@@ -58,12 +58,12 @@ cloud:
 
 scheduler:
   bbc:
-    cron: "0 40 * * * *"
+    cron: "0 50 * * * *"
   goal:
-    cron: "0 34 * * * *"
+    cron: "0 50 * * * *"
   espn:
-    epl-cron: "0 43 * * * *"
-    esp-cron: "0 46 * * * *"
+    epl-cron: "0 50 * * * *"
+    esp-cron: "0 50 * * * *"
 
 file:
   upload:

@@ -34,11 +34,9 @@ public class SummaryController {
       @PageableDefault(size = 20, sort = "publishedAt") Pageable pageable
   ) {
 
-    Page<GetAISummary> articles = summaryService.getArticles(keyword, sourceName, pageable, sortBy);
+    PageResponse<GetAISummary> articles = summaryService.getArticles(keyword, sourceName, pageable, sortBy);
 
-    PageResponse<GetAISummary> body = PageResponse.of(articles);
-
-    return ResponseEntity.ok(body);
+    return ResponseEntity.ok(articles);
   }
 
   @Timed(value = "api.summary.keyword", description = "가장 많이 나온 키워드 Top 10을 조회합니다.")

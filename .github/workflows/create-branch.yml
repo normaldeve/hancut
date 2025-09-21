@@ -1,0 +1,46 @@
+name: Auto Create Branch
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: read
+
+jobs:
+  create-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract keyword from issue
+        id: extract
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const body = context.payload.issue.body || '';
+            const keywordMatch = body.match(/### Branch Keyword\s*\n([^\n]+)/);
+            const keyword = keywordMatch ? keywordMatch[1].trim() : null;
+            
+            if (!keyword) {
+              core.setFailed('브랜치 키워드가 없습니다.');
+              return;
+            }
+            
+            // 키워드 정규화
+            const cleanKeyword = keyword
+              .toLowerCase()
+              .replace(/[^a-z0-9-]/g, '-')
+              .replace(/-+/g, '-')
+              .slice(0, 20);
+            
+            core.setOutput('keyword', cleanKeyword);
+
+      - name: Create branch
+        uses: peterjgrainger/action-create-branch@v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: feat/#${{ github.event.issue.number }}/${{ steps.extract.outputs.keyword }}
