@@ -15,27 +15,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract keyword from issue
+      - name: Extract keyword & branch type
         id: extract
         uses: actions/github-script@v6
         with:
           script: |
             const body = context.payload.issue.body || '';
+            const labels = context.payload.issue.labels.map(l => l.name.toLowerCase());
+            
+            // 기본 prefix
+            let type = 'feat';
+            if (labels.includes('refactor')) type = 'refactor';
+            else if (labels.includes('fix')) type = 'fix';
+            else if (labels.includes('chore')) type = 'chore';
+            
+            // 키워드 추출
             const keywordMatch = body.match(/### Branch Keyword\s*\n([^\n]+)/);
             const keyword = keywordMatch ? keywordMatch[1].trim() : null;
-            
+
             if (!keyword) {
               core.setFailed('브랜치 키워드가 없습니다.');
               return;
             }
-            
+
             // 키워드 정규화
             const cleanKeyword = keyword
               .toLowerCase()
               .replace(/[^a-z0-9-]/g, '-')
               .replace(/-+/g, '-')
               .slice(0, 20);
-            
+
+            core.setOutput('type', type);
             core.setOutput('keyword', cleanKeyword);
 
       - name: Create branch
@@ -43,4 +53,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SECRET_KEY }}
         with:
-          branch: feat/#${{ github.event.issue.number }}/${{ steps.extract.outputs.keyword }}
+          branch: ${{ steps.extract.outputs.type }}/#${{ github.event.issue.number }}/${{ steps.extract.outputs.keyword }}
