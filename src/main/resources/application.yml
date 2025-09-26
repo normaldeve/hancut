@@ -1,16 +1,14 @@
 spring:
   application:
     name: kill-batch-system
-  sql:
-    init:
-      mode: always
-      schema-locations:
-        - classpath:org/springframework/batch/core/schema-drop-postgresql.sql
   config:
     import: optional:file:.env[.properties]
   profiles:
     active:
       - dev
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}

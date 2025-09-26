@@ -6,6 +6,11 @@ spring:
     driver-class-name: org.postgresql.Driver
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
+  sql:
+    init:
+      mode: always
+      schema-locations:
+        - classpath:org/springframework/batch/core/schema-drop-postgresql.sql
   jpa:
     hibernate:
       ddl-auto: validate
