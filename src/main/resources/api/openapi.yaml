@@ -1,0 +1,129 @@
+openapi: 3.1.1
+info:
+  title: 축구한컷 API
+  description: 축구한컷 서비스 API입니다~
+  termsOfService: https://hancut.vercel.app/
+  contact:
+    name: 김준우
+    email: junnukim1007@gmail.com
+  version: 1.0.0
+tags:
+  - name: Summary
+    description: AI 뉴스 요약 조회 관련 엔드포인트
+paths:
+  /api/summary:
+    summary: AI 뉴스 요약 기사를 조회합니다.
+    get:
+      summary: AI 뉴스 요약 기사를 조회합니다.
+      description: "최신순, 인기순 조회가 가능하며, 사이트 별, 키워드를 통해 조회가 가능합니다."
+      tags:
+        - Summary
+      parameters:
+        - name: keyword
+          in: query
+          description: 키워드를 통해 검색
+          example: 손흥민
+          schema: {}
+        - name: sourceName
+          in: query
+          description: 뉴스 사이트를 통해 조회가 가능합니다.
+          example: ESPN
+          schema: {}
+        - name: sortBy
+          in: query
+          description: "최신순, 인기순으로 조회가 가능합니다."
+          example: LASTEST
+          schema: {}
+        - name: size
+          in: query
+          description: 조회할 데이터 개수를 지정합니다.
+          example: "20"
+          schema: {}
+        - name: page
+          in: query
+          description: 페이지 번호를 통해 데이터를 조회합니다.
+          example: "1"
+          schema: {}
+      responses:
+        "200":
+          description: 뉴스 요약 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetAISummary"
+              example:
+                id: 101
+                title: "맨체스터 유나이티드, 리버풀과의 경기서 극적인 승리"
+                summary:
+                  - 맨유가 후반 추가시간에 결승골을 넣으며 2-1 승리를 거뒀다.
+                  - 리버풀은 경기 초반 주도권을 잡았지만 결정적인 기회를 살리지 못했다.
+                  - 브루노 페르난데스가 팀 승리를 이끄는 활약을 펼쳤다.
+                keyword:
+                  - 맨체스터 유나이티드
+                  - 리버풀
+                  - 프리미어리그
+                publishedAt: 2025-09-28T18:30:00
+                league: EPL
+                team: Manchester United
+                thumbnailUrl: https://example.com/images/mu-vs-liverpool.jpg
+                url: https://example.com/articles/mu-vs-liverpool
+                sourceName: ESPN
+  /api/summary/keywords/top:
+    summary: 가장 많이 나온 키워드 TOP 10 조회
+    get:
+      summary: 가장 많이 나온 키워드 조회
+      tags:
+        - Summary
+      parameters:
+        - name: limit
+          in: query
+          description: 키워드 개수를 결정합니다.
+          example: "10"
+          schema: { }
+      responses:
+        "200":
+          description: 키워드 조회 성공
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TopKeyword"
+              example:
+                keyowrd: 손흥민
+                count: "12"
+components:
+  schemas:
+    GetAISummary:
+      description: 뉴스 요약 조회 응답
+      properties:
+        id:
+          type: integer
+          format: int64
+        title:
+          type: string
+        summary:
+          items:
+            type: string
+          type: array
+        keyword:
+          items:
+            type: string
+          type: array
+        publishedAt:
+          type: string
+          format: date-time
+        league:
+          type: string
+        team:
+          type: string
+        url:
+          type: string
+        sourceName:
+          type: string
+    TopKeyword:
+      description: 상위 키워드 조회 응답
+      properties:
+        keyword:
+          type: string
+        count:
+          type: integer
+          format: int64
