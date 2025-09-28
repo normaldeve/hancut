@@ -11,13 +11,18 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class OpenAISummarize implements AISummarize {
+
+  private final ObjectMapper objectMapper;
 
   private final WebClient webClient;
 
@@ -46,10 +51,22 @@ public class OpenAISummarize implements AISummarize {
                 "기사 본문:\n" + safeTrim(content, 8000))
         )
     );
+
+    logRequestPreview(body);
+
     Map resp = webClient.post()
         .uri("/chat/completions")
+        .contentType(MediaType.APPLICATION_JSON)
         .bodyValue(body)
         .retrieve()
+        .onStatus(HttpStatusCode::isError, r ->
+            r.bodyToMono(String.class).defaultIfEmpty("")
+                .flatMap(b -> {
+                  log.error("[OpenAI error] status={}, body={}", r.statusCode(), b);
+                  return Mono.error(new RuntimeException(
+                      "OpenAI error %d: %s".formatted(r.statusCode().value(), b)));
+                })
+        )
         .bodyToMono(Map.class)
         .block(Duration.ofSeconds(30));
 
@@ -81,6 +98,13 @@ public class OpenAISummarize implements AISummarize {
     } catch (Exception e) {
       throw new IllegalStateException("요약 JSON 파싱 실패: " + e.getMessage(), e);
     }
+  }
+
+  private void logRequestPreview(Object body) {
+    try {
+      String json = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(body);
+      log.debug("[OpenAI Request JSON]\n{}", json.length() > 2000 ? json.substring(0,2000) + "...(truncated)" : json);
+    } catch (Exception ignore) {}
   }
 
   private static String safeTrim(String s, int maxLen) {

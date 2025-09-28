@@ -1,8 +1,11 @@
 package com.system.batch.killbatchsystem.summary.api;
 
 import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.summary.application.AISummarize;
 import com.system.batch.killbatchsystem.summary.domain.GetAISummary;
 import com.system.batch.killbatchsystem.summary.domain.PageResponse;
+import com.system.batch.killbatchsystem.summary.domain.SummaryContent;
+import com.system.batch.killbatchsystem.summary.domain.SummaryRequest;
 import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
 import com.system.batch.killbatchsystem.summary.application.SummaryService;
 import com.system.batch.killbatchsystem.summary.infrastructure.jpa.SortBy;
@@ -13,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +29,8 @@ public class SummaryController {
 
   private final SummaryService summaryService;
 
+  private final AISummarize aiSummarize;
+
   @Timed(value = "api.summary.list", description = "AI 뉴스 요약 기사를 조회합니다")
   @GetMapping
   public ResponseEntity<PageResponse<GetAISummary>> getArticles(
@@ -33,7 +40,8 @@ public class SummaryController {
       @PageableDefault(size = 20, sort = "publishedAt") Pageable pageable
   ) {
 
-    PageResponse<GetAISummary> articles = summaryService.getArticles(keyword, sourceName, pageable, sortBy);
+    PageResponse<GetAISummary> articles = summaryService.getArticles(keyword, sourceName, pageable,
+        sortBy);
 
     return ResponseEntity.ok(articles);
   }
@@ -48,4 +56,10 @@ public class SummaryController {
     return ResponseEntity.ok(body);
   }
 
+  @PostMapping(value = "/ai")
+  public ResponseEntity<SummaryContent> summarize(@RequestBody SummaryRequest request) {
+    SummaryContent result = aiSummarize.summarize(request.content());
+
+    return ResponseEntity.ok(result);
+  }
 }

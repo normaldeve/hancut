@@ -13,6 +13,9 @@ public class GlobalExceptionHandler {
   protected ResponseEntity<ErrorResponse> handleException(Exception e) {
 
     ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+    log.error("[GlobalExceptionHandler] {} - message: {}",
+        errorCode.getCode(), e.getMessage(), e);
+
     return ResponseEntity
         .status(errorCode.getHttpStatus())
         .body(ErrorResponse.of(errorCode));
