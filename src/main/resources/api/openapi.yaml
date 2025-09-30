@@ -110,6 +110,7 @@ paths:
               example:
                 keyowrd: 손흥민
                 count: "12"
+
 components:
   schemas:
     PageResponse_GetAISummary:

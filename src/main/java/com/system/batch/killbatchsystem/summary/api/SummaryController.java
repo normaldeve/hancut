@@ -10,7 +10,6 @@ import com.system.batch.killbatchsystem.summary.application.SummaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,18 +21,16 @@ public class SummaryController implements SummaryApi {
   private final AISummarize aiSummarize;
 
   @Override
-  public ResponseEntity<PageResponseGetAISummary> getAISummaries(String keyword,
+  public PageResponseGetAISummary getAISummaries(String keyword,
       ArticleSource sourceName, SortBy sortBy, Integer page, Integer size) throws Exception {
     Pageable pageable = PageRequest.of(page, size);
 
-    PageResponseGetAISummary articles = summaryService.getArticles(keyword, sourceName, pageable,
+    return summaryService.getArticles(keyword, sourceName, pageable,
         sortBy);
-
-    return ResponseEntity.ok(articles);
   }
 
   @Override
-  public ResponseEntity<TopKeyword> getTopKeywords(Integer limit) throws Exception {
+  public TopKeyword getTopKeywords(Integer limit) throws Exception {
     return SummaryApi.super.getTopKeywords(limit);
   }
 
