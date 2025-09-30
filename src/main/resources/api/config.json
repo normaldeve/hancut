@@ -3,19 +3,18 @@
   "dateLibrary": "java8",
   "useSpringBoot3": true,
   "hideGenerationTimestamp": true,
-
   "modelPackage": "com.system.batch.killbatchsystem.model",
   "apiPackage": "com.system.batch.killbatchsystem.app",
   "invokerPackage": "com.system.batch.killbatchsystem.app",
-
   "serializableModel": true,
   "interfaceOnly": true,
   "useTags": true,
   "useGzipFeature": true,
   "unhandledException": true,
   "useSwaggerUI": true,
-
   "typeMappings": {
     "OffsetDateTime": "java.time.LocalDateTime"
-  }
+  },
+  "useResponseEntity": false,
+  "delegatePattern": true
 }
