@@ -27,10 +27,4 @@ public class WebConfig implements WebMvcConfigurer {
         .allowedHeaders("*")
         .allowCredentials(true);
   }
-
-  // CustomMessageConverter 우선 순위를 가장 높게 설정하기 - 공통 응답 처리를 위해
-  @Override
-  public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
-    converters.add(0, new CustomHttpMessageConverter(objectMapper));
-  }
 }
