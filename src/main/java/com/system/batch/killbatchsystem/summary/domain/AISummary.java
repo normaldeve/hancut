@@ -1,6 +1,6 @@
 package com.system.batch.killbatchsystem.summary.domain;
 
-import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.model.ArticleSource;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Builder;

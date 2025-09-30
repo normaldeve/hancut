@@ -17,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class EspnLeagueJobConfigs {
+public class EspnLeagueJobConfig {
 
   private final SummarizeTasklet summarizeTasklet;
   private final PlatformTransactionManager tx;

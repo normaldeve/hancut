@@ -62,8 +62,11 @@
     <root level="DEBUG">
       <appender-ref ref="STDOUT"/>
       <appender-ref ref="FILE"/>
-      <appender-ref ref="TRACEID_FILE"/>
     </root>
+    <logger name="com.system.batch.killbatchsystem.common.log.MVCLoggingAspect"
+      level="INFO" additivity="false">
+      <appender-ref ref="TRACEID_FILE"/>
+    </logger>
   </springProfile>
 
   <!-- test profile -->

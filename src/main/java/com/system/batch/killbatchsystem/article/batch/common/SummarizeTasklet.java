@@ -2,7 +2,7 @@ package com.system.batch.killbatchsystem.article.batch.common;
 
 import com.system.batch.killbatchsystem.article.application.ArticleService;
 import com.system.batch.killbatchsystem.article.domain.Article;
-import com.system.batch.killbatchsystem.notification.SummarizeCompletePayload;
+import com.system.batch.killbatchsystem.model.ArticleSource;
 import com.system.batch.killbatchsystem.notification.sse.SseHub;
 import com.system.batch.killbatchsystem.summary.application.SummaryService;
 import com.system.batch.killbatchsystem.summary.domain.CreateSummary;

@@ -20,6 +20,8 @@ public class MVCLoggingAspect {
   private static final String TRACE_ID = "traceId";
   private static final String PREFIX_START = "-->";
   private static final String PREFIX_COMPLETE = "<--";
+  private static final String PREFIX_COMPLETE_ERROR = "<-X-";
+  private static final String MDC_DEPTH = "traceDepth";
 
   /**
    * Controller, Service, Repository 메서드를 모두 감싼 포인트컷
@@ -29,6 +31,10 @@ public class MVCLoggingAspect {
       "execution(* com.system.batch.killbatchsystem..*Repository.*(..))")
   public Object logAllLayers(ProceedingJoinPoint joinPoint) throws Throwable {
     initTraceIdIfAbsent();
+
+
+    int depth = incDepth();
+    boolean isRoot = depth == 1;
 
     MethodSignature signature = (MethodSignature) joinPoint.getSignature();
     String className = signature.getDeclaringType().getSimpleName();
@@ -42,6 +48,10 @@ public class MVCLoggingAspect {
 
     Object[] args = joinPoint.getArgs();
     String argsJson = toJson(args);
+
+    if (isRoot) {
+      log.info("{} ============================== [START REQUEST] {}.{} ==============================", getTraceId(), className, methodName);
+    }
 
     log.info("{} {} [Request] ClassName: {}.{} - Method: {}() - Args: {}", getTraceId(),
         prefixStart, layerTag,
@@ -57,14 +67,23 @@ public class MVCLoggingAspect {
           getTraceId(),
           prefixComplete, layerTag, className, methodName, resultJson, duration);
 
-      clearTraceIdIfRootLayer(className);
+      if (isRoot) {
+        log.info("{} ============================== [END REQUEST] {}.{} ==============================", getTraceId(), className, methodName);
+        clearTraceIdIfRootLayer(className);
+      }
       return result;
     } catch (Exception e) {
       log.error("{} {} [Exception] ClassName: {}.{} - Method: {} - ErrorMessage: {}", getTraceId(),
-          prefixComplete, layerTag, className,
+          PREFIX_COMPLETE_ERROR, layerTag, className,
           methodName, e.toString(), e);
-      clearTraceIdIfRootLayer(className);
+
+      if (isRoot) {
+        log.info("{} ============================== [END REQUEST WITH ERROR] {}.{} ==============================", getTraceId(), className, methodName);
+        clearTraceIdIfRootLayer(className);
+      }
       throw e;
+    } finally {
+      decDepth();
     }
   }
 
@@ -127,6 +146,22 @@ public class MVCLoggingAspect {
     } catch (Exception e) {
       return String.valueOf(obj);
     }
+  }
+
+  private int incDepth() {
+    String v = MDC.get(MDC_DEPTH);
+    int d = (v == null) ? 0 : Integer.parseInt(v);
+    d++;
+    MDC.put(MDC_DEPTH, Integer.toString(d));
+    return d;
+  }
+
+  private void decDepth() {
+    String v = MDC.get(MDC_DEPTH);
+    if (v == null) return;
+    int d = Integer.parseInt(v) - 1;
+    if (d <= 0) MDC.remove(MDC_DEPTH);
+    else MDC.put(MDC_DEPTH, Integer.toString(d));
   }
 }
 

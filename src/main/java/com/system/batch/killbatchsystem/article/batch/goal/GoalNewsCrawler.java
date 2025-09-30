@@ -1,8 +1,8 @@
 package com.system.batch.killbatchsystem.article.batch.goal;
 
-import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
 import com.system.batch.killbatchsystem.article.batch.common.NewsCrawler;
 import com.system.batch.killbatchsystem.article.domain.Article;
+import com.system.batch.killbatchsystem.model.ArticleSource;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,6 +1,6 @@
 package com.system.batch.killbatchsystem.summary.infrastructure.jpa;
 
-import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.model.ArticleSource;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

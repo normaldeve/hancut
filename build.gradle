@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id "org.openapi.generator" version "7.6.0"
 }
 
 group = 'com.system.batch'
@@ -80,6 +81,30 @@ dependencies {
 
     // ===== Flyway =====
     runtimeOnly("org.flywaydb:flyway-database-postgresql:11.11.2")
+
+    // ===== Swagger =====
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13"
+    compileOnly 'io.swagger:swagger-annotations:1.6.14'
+    compileOnly 'org.openapitools:jackson-databind-nullable:0.2.6'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
+    implementation 'io.swagger.core.v3:swagger-annotations:2.2.27'
+}
+
+openApiGenerate {
+    generatorName = "spring"
+    inputSpec = "$projectDir/src/main/resources/api/openapi.yaml"
+    outputDir = "$buildDir/generated/openapi"
+    configFile = "$projectDir/src/main/resources/api/config.json"
+}
+
+tasks.compileJava {
+    dependsOn tasks.openApiGenerate
+}
+
+sourceSets {
+    main {
+        java.srcDir("$buildDir/generated/openapi/src/main/java")
+    }
 }
 
 tasks.named('test') {

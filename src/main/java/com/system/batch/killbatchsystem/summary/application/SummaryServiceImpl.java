@@ -1,19 +1,17 @@
 package com.system.batch.killbatchsystem.summary.application;
 
-import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.model.ArticleSource;
+import com.system.batch.killbatchsystem.model.GetAISummary;
+import com.system.batch.killbatchsystem.model.PageResponseGetAISummary;
+import com.system.batch.killbatchsystem.model.SortBy;
+import com.system.batch.killbatchsystem.model.TopKeyword;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.CreateSummary;
-import com.system.batch.killbatchsystem.summary.domain.GetAISummary;
-import com.system.batch.killbatchsystem.summary.domain.PageResponse;
 import com.system.batch.killbatchsystem.summary.domain.SummaryContent;
-import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
-import com.system.batch.killbatchsystem.summary.infrastructure.jpa.SortBy;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +32,6 @@ public class SummaryServiceImpl implements SummaryService {
 
   @Override
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  @CacheEvict(cacheNames = {"summaryList", "topKeywords"}, allEntries = true)
   public void createAIArticle(CreateSummary createSummary) {
     SummaryContent summary = aisummarize.summarize(createSummary.content());
 
@@ -45,7 +42,6 @@ public class SummaryServiceImpl implements SummaryService {
 
   @Override
   @Transactional(readOnly = true)
-  @Cacheable(cacheNames = "summaryDetail", key = "#id")
   public AISummary findAISummaryById(Long id) {
     return aiSummaryRepository.findById(id)
         .orElseThrow(() -> new RuntimeException("AISummary not found"));
@@ -53,27 +49,63 @@ public class SummaryServiceImpl implements SummaryService {
 
   @Override
   @Transactional(readOnly = true)
-  @Cacheable(cacheNames = "topKeywords", key = "#limit")
   public List<TopKeyword> topKeywords(int limit) {
     return aiSummaryRepository.findTopKeywords(topPage(limit));
   }
 
   @Override
   @Transactional(readOnly = true)
-  @Cacheable(
-      cacheNames = "summaryList",
-      key = "'k='+#keyword+'|s='+#sourceName+'|p='+#pageable.pageNumber+'|z='+#pageable.pageSize+'|o='+#sortBy",
-      condition = "#pageable.pageNumber <= 2"
-  )
-  public PageResponse<GetAISummary> getArticles(@Nullable String keyword, @Nullable ArticleSource sourceName,
-      Pageable pageable, SortBy sortBy) {
-    Page<AISummary> summaries = aiSummaryRepository.findPage(keyword, sourceName, pageable, sortBy);
-    Page<GetAISummary> summariesDTO = summaries.map(GetAISummary::fromArticle);
-    return PageResponse.of(summariesDTO);
+  public PageResponseGetAISummary getArticles(
+      @Nullable String keyword,
+      @Nullable ArticleSource sourceName,
+      Pageable pageable,
+      SortBy sortBy
+  ) {
+
+    ArticleSource domainSource = null;
+    if (sourceName != null) {
+      domainSource = ArticleSource.valueOf(sourceName.getValue());
+    }
+
+    SortBy domainSort =
+        (sortBy == null) ? SortBy.LATEST
+            : SortBy.valueOf(sortBy.getValue());
+
+    Page<AISummary> page = aiSummaryRepository.findPage(keyword, domainSource, pageable, domainSort);
+
+    List<GetAISummary> cards = page.getContent()
+        .stream()
+        .map(this::toApi)
+        .toList();
+
+    PageResponseGetAISummary resp = new PageResponseGetAISummary();
+    resp.setCards(cards);
+    resp.setPage(page.getNumber());
+    resp.setTotalPages(page.getTotalPages());
+    resp.setLast(page.isLast());
+    resp.setSize(page.getSize());
+    resp.setNumberOfElements(page.getNumberOfElements());
+    resp.setTotalElements(page.getTotalElements());
+    return resp;
   }
 
   private Pageable topPage(int limit) {
     int size = Math.max(1, Math.min(limit, maxLimit));
     return PageRequest.of(0, size);
+  }
+
+  private GetAISummary toApi(AISummary s) {
+    return new GetAISummary()
+        .id(s.id())
+        .title(s.title())
+        .summary(s.summary())
+        .keyword(s.keyword())
+        .publishedAt(s.publishedAt())
+        .thumbnailUrl(s.thumbnailUrl())
+        .league(s.league())
+        .team(s.team())
+        .url(s.url())
+        .sourceName(ArticleSource.fromValue(s.sourceName().name())
+        );
   }
 }

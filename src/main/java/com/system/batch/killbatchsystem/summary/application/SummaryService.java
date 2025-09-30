@@ -1,12 +1,11 @@
 package com.system.batch.killbatchsystem.summary.application;
 
-import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.model.ArticleSource;
+import com.system.batch.killbatchsystem.model.PageResponseGetAISummary;
+import com.system.batch.killbatchsystem.model.SortBy;
+import com.system.batch.killbatchsystem.model.TopKeyword;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
 import com.system.batch.killbatchsystem.summary.domain.CreateSummary;
-import com.system.batch.killbatchsystem.summary.domain.GetAISummary;
-import com.system.batch.killbatchsystem.summary.domain.PageResponse;
-import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
-import com.system.batch.killbatchsystem.summary.infrastructure.jpa.SortBy;
 import jakarta.annotation.Nullable;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +18,6 @@ public interface SummaryService {
 
   List<TopKeyword> topKeywords(int limit);
 
-  PageResponse<GetAISummary> getArticles(@Nullable String keyword, @Nullable ArticleSource sourceName, Pageable pageable, SortBy sortBy);
+  PageResponseGetAISummary getArticles(@Nullable String keyword, @Nullable ArticleSource sourceName, Pageable pageable, SortBy sortBy);
 
 }

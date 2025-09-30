@@ -1,12 +1,12 @@
 package com.system.batch.killbatchsystem.summary.infrastructure;
 
-import com.system.batch.killbatchsystem.article.batch.common.ArticleSource;
+import com.system.batch.killbatchsystem.model.ArticleSource;
+import com.system.batch.killbatchsystem.model.SortBy;
+import com.system.batch.killbatchsystem.model.TopKeyword;
 import com.system.batch.killbatchsystem.summary.domain.AISummary;
-import com.system.batch.killbatchsystem.summary.domain.TopKeyword;
 import com.system.batch.killbatchsystem.summary.infrastructure.jpa.AISummaryEntity;
 import com.system.batch.killbatchsystem.summary.infrastructure.jpa.AISummaryJpaRepositoryImpl;
 import com.system.batch.killbatchsystem.summary.application.AISummaryRepository;
-import com.system.batch.killbatchsystem.summary.infrastructure.jpa.SortBy;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

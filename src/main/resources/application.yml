@@ -56,12 +56,12 @@ cloud:
 
 scheduler:
   bbc:
-    cron: "0 30 * * * *"
+    cron: "0 58 * * * *"
   goal:
-    cron: "0 30 * * * *"
+    cron: "0 55 * * * *"
   espn:
-    epl-cron: "0 30 * * * *"
-    esp-cron: "0 30 * * * *"
+    epl-cron: "0 50 * * * *"
+    esp-cron: "0 50 * * * *"
 
 file:
   upload:
@@ -75,3 +75,6 @@ management:
     web:
       exposure:
         include: metrics, health, prometheus
+
+springdoc:
+  hateoas: false

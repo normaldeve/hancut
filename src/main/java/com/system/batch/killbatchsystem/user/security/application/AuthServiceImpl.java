@@ -1,7 +1,6 @@
 package com.system.batch.killbatchsystem.user.security.application;
 
 import com.system.batch.killbatchsystem.user.application.UserRepository;
-import com.system.batch.killbatchsystem.user.domain.CreateUser;
 import com.system.batch.killbatchsystem.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
