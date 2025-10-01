@@ -21,27 +21,30 @@ jobs:
           distribution: 'corretto'
           cache: 'gradle'
 
-      - name: Grant execute permission
+      - name: Gradle 캐싱
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: 빌드 권한 부여
         run: chmod +x ./gradlew
 
-      - name: Run tests
+      - name: 테스트 돌리기
         run: ./gradlew clean test
 
-      - name: 테스트 결과를 PR에 코멘트로 등록합니다
+      - name: 테스트 결과를 PR에 코멘트로 등록
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
           files: '**/build/test-results/test/TEST-*.xml'
 
-      - name: 테스트 실패 시, 실패한 코드 라인에 Check 코멘트를 등록합니다
+      - name: 테스트 실패 시, 실패한 코드 라인에 Check 코멘트를 등록
         uses: mikepenz/action-junit-report@v3
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           token: ${{ github.token }}
 
-      - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1
-        if: ${{ always() }}  # 테스트가 실패하여도 Report를 보기 위해 `always`로 설정
+      - name: 테스트 리포트 작성
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure() # always run even if the previous step fails
         with:
-          files: build/test-results/**/*.xml
+          report_paths: '**/build/test-results/test/TEST-*.xml'
