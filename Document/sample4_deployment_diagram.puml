@@ -1,0 +1,14 @@
+@startuml
+node "사용자 PC" {
+  [웹 브라우저]
+}
+node "Web Server" {
+  [Spring Boot App]
+}
+node "DB Server" {
+  database "PostgreSQL"
+}
+
+[웹 브라우저] --> [Spring Boot App]
+[Spring Boot App] --> [PostgreSQL]
+@enduml

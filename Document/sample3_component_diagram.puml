@@ -1,0 +1,11 @@
+@startuml
+package "Presentation Layer" {
+  [WebApp] --> [Coupon API]
+}
+package "Business Layer" {
+  [Coupon API] --> [Coupon Service]
+}
+package "Data Layer" {
+  [Coupon Service] --> [User DB]
+}
+@enduml

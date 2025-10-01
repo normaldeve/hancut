@@ -1,0 +1,95 @@
+@startuml
+' ====== Light Theme ======
+skinparam BackgroundColor #FFFFFF
+skinparam Shadowing false
+
+skinparam Sequence {
+  ArrowColor #E67E22
+  LifeLineBorderColor #2E86C1
+  LifeLineBackgroundColor #FDFEFE
+
+  ParticipantBorderColor #2E86C1
+  ParticipantBackgroundColor #EAF2F8
+  ParticipantFontColor #1B2631
+
+  ActorBorderColor #117864
+  ActorBackgroundColor #D5F5E3
+  ActorFontColor #1B2631
+
+  BoxBackgroundColor #EBF5FB
+  BoxBorderColor #2E86C1
+
+  GroupBorderColor #2E86C1
+  GroupBackgroundColor #F8F9F9
+  GroupFontColor #1B2631
+
+  TitleFontColor #1B2631
+}
+
+title (UC06-2) 구독자는 강좌 할인 쿠폰 발급 시 관련 알림을 받을 수 있다.
+
+actor "구독자" as User
+
+box "Presentation Layer" #D6EAF8
+participant "구름EDU 홈페이지 메인" as Main
+participant "쿠폰 알림 메뉴" as Coupon
+end box
+
+box "Data Layer" #F9E79F
+participant "구독 정보 저장 모듈" as Store
+database "유저 DB" as DB
+end box
+
+== 진입 ==
+User -> Main : 사이트 접속
+activate Main
+Main --> User : 화면 표시
+deactivate Main
+
+User -> Main : 로그인
+activate Main
+Main --> User : 로그인 결과
+deactivate Main
+
+Main -> Coupon : 알림 메뉴 진입
+activate Coupon
+Coupon --> Main : 화면 전환
+deactivate Coupon
+
+== 쿠폰 확인 ==
+Coupon -> Store : 미발급 쿠폰 여부 조회
+activate Store
+Store -> DB : SELECT 미발급 쿠폰
+activate DB
+DB --> Store : 결과(있음/없음)
+deactivate DB
+
+alt 미발급 쿠폰 있음
+  Store --> Coupon : 발급 가능 수 전달
+  deactivate Store
+  activate Coupon
+  Coupon -> User : 미발급 쿠폰 안내 표시
+  deactivate Coupon
+
+  User -> Coupon : 발급 요청
+  activate Coupon
+  Coupon -> Store : 쿠폰 발급 처리
+  activate Store
+  Store -> DB : INSERT 쿠폰발급
+  activate DB
+  DB --> Store : OK
+  deactivate DB
+  Store --> Coupon : 처리 결과
+  deactivate Store
+  Coupon --> User : 발급 완료 알림
+  deactivate Coupon
+
+else 미발급 쿠폰 없음
+  Store --> Coupon : 없음
+  deactivate Store
+  activate Coupon
+  Coupon -> User : "발급 가능한 쿠폰이 없어요"
+  deactivate Coupon
+end
+
+@enduml

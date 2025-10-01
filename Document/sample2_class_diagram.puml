@@ -1,0 +1,49 @@
+@startuml
+' ===== 밝은 톤 스타일 =====
+skinparam backgroundColor #FFFFFF
+skinparam class {
+  BackgroundColor #EAF2F8
+  BorderColor #2E86C1
+  FontColor #1B2631
+}
+skinparam arrow {
+  Color #E67E22
+}
+
+title 구독자 - 쿠폰 발급 시스템 클래스 다이어그램
+
+class Subscriber {
+  - id : Long
+  - name : String
+  - email : String
+  --
+  + requestCoupon()
+}
+
+class Coupon {
+  - id : Long
+  - discountRate : int
+  - isUsed : boolean
+  --
+  + issue()
+  + validate()
+}
+
+class CouponService {
+  + checkAvailableCoupons(subscriberId : Long) : List<Coupon>
+  + issueCoupon(subscriberId : Long, couponId : Long) : boolean
+}
+
+class UserDB {
+  + saveSubscriber(sub : Subscriber)
+  + saveCoupon(coupon : Coupon)
+  + findCouponsBySubscriber(id : Long) : List<Coupon>
+}
+
+' 관계 설정
+Subscriber "1" -- "N" Coupon : owns >
+CouponService --> Subscriber : manages
+CouponService --> Coupon : issues
+CouponService --> UserDB : persist
+
+@enduml
