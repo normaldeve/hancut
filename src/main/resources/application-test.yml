@@ -11,6 +11,8 @@ spring:
     properties:
       hibernate.format_sql: true
       hibernate.show_sql: false
+  flyway:
+    enabled: false
   batch:
     jdbc:
       initialize-schema: never
@@ -19,3 +21,14 @@ spring:
 
 cors:
   allowed-origins: localhost:3000
+
+log:
+  config:
+    error:
+      path: logs/test/error
+      filename: application-dev-error
+    trace:
+      path: logs/test/trace
+      filename: trace
+    maxHistory: 30
+    totalSizeCap: 1GB
