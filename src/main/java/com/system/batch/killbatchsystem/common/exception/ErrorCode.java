@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
   // 공통
-  INTERNAL_SERVER_ERROR("COMMON_001", "서버 내부 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+  INTERNAL_SERVER_ERROR("COMMON_101", "서버 내부 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+  NOT_FOUND("COMMON_102", "잘못된 API 주소로 요청하였습니다.", HttpStatus.NOT_FOUND);
 
   private final String code;
   private final String message;

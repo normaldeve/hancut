@@ -11,5 +11,4 @@ public class ApiResponse<T> {
   private final LocalDateTime timestamp = LocalDateTime.now();
   private String path;
   private T data;
-  private String message;
 }

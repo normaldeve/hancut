@@ -1,7 +1,5 @@
 package com.system.batch.killbatchsystem.common.api;
 
-import com.system.batch.killbatchsystem.common.exception.ErrorCode;
-import com.system.batch.killbatchsystem.common.exception.ErrorData;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -30,21 +28,13 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
   ) {
     String path = request.getURI().getPath();
 
-    if (body instanceof ErrorData errorData) {
-      ErrorCode errorCode = errorData.getErrorCode();
-      response.setStatusCode(errorCode.getHttpStatus());
-
+    if (!(body instanceof ApiResponse<?>)) {
       return ApiResponse.builder()
           .path(path)
-          .data(errorData.getRejectedValues())
-          .message(errorCode.getMessage())
+          .data(body)
           .build();
+    } else {
+      return body;
     }
-
-    return ApiResponse.builder()
-        .path(path)
-        .data(body)
-        .message("성공적으로 처리되었습니다")
-        .build();
   }
 }
