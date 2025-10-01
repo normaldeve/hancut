@@ -1,4 +1,4 @@
-package com.system.batch.killbatchsystem.summary.config;
+package com.system.batch.killbatchsystem.summary.infrastructure.ai.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;

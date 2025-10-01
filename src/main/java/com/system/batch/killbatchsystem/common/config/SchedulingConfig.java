@@ -1,4 +1,4 @@
-package com.system.batch.killbatchsystem.summary.config;
+package com.system.batch.killbatchsystem.common.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
