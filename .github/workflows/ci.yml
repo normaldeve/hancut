@@ -27,10 +27,21 @@ jobs:
       - name: Run tests
         run: ./gradlew clean test
 
-      - name: Generate test report
+      - name: 테스트 결과를 PR에 코멘트로 등록합니다
+        uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
-        uses: actions/upload-artifact@v4
         with:
-          name: test-results
-          path: build/reports/tests/
-          retention-days: 7
+          files: '**/build/test-results/test/TEST-*.xml'
+
+      - name: 테스트 실패 시, 실패한 코드 라인에 Check 코멘트를 등록합니다
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
+          token: ${{ github.token }}
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: ${{ always() }}  # 테스트가 실패하여도 Report를 보기 위해 `always`로 설정
+        with:
+          files: build/test-results/**/*.xml

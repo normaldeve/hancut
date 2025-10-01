@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
     ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
 
     String msg = (e.getMessage() != null) ? e.getMessage() : e.getClass().getSimpleName();
-    log.error("[GlobalExceptionHandler] {} - message: {}", errorCode.getCode(), msg, e);
+    log.error("[GlobalExceptionHandler] {} - message: {}", errorCode.getCode(), msg);
 
     ErrorResponse errorResponse = ErrorResponse.builder()
         .code(errorCode.getCode())
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
         .build();
 
     ApiResponse<ErrorResponse> body = ApiResponse.<ErrorResponse>builder()
-        .path(request != null ? request.getRequestURI() : "") // null 금지
+        .path(request != null ? request.getRequestURI() : "")
         .data(errorResponse)
         .build();
 
@@ -42,7 +42,26 @@ public class GlobalExceptionHandler {
       HttpServletRequest request) {
     ErrorCode errorCode = ErrorCode.NOT_FOUND;
     String msg = (e.getMessage() != null) ? e.getMessage() : e.getClass().getSimpleName();
-    log.error("[GlobalExceptionHandler] {} - message: {}", errorCode.getCode(), msg, e);
+    log.error("[NoResourceFoundException] {} - message: {}", errorCode.getCode(), msg);
+
+    ApiResponse<ErrorResponse> body = ApiResponse.<ErrorResponse>builder()
+        .path(request.getRequestURI())
+        .data(ErrorResponse.builder()
+            .code(errorCode.getCode())
+            .message(errorCode.getMessage())
+            .build())
+        .build();
+
+    return ResponseEntity.status(errorCode.getHttpStatus()).body(body);
+  }
+
+  @ExceptionHandler(CustomException.class)
+  public ResponseEntity<ApiResponse<ErrorResponse>> handleCustomException(CustomException e,
+      HttpServletRequest request) {
+    ErrorCode errorCode = e.getErrorCode();
+
+    String detail = (e.getMessage() != null) ? e.getMessage() : e.getClass().getSimpleName();
+    log.warn("[CustomException] {} - {}", errorCode.getCode(), detail);
 
     ApiResponse<ErrorResponse> body = ApiResponse.<ErrorResponse>builder()
         .path(request.getRequestURI())

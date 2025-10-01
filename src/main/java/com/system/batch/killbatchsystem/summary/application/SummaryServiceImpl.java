@@ -1,5 +1,7 @@
 package com.system.batch.killbatchsystem.summary.application;
 
+import com.system.batch.killbatchsystem.common.exception.CustomException;
+import com.system.batch.killbatchsystem.common.exception.ErrorCode;
 import com.system.batch.killbatchsystem.model.ArticleSource;
 import com.system.batch.killbatchsystem.model.GetAISummary;
 import com.system.batch.killbatchsystem.model.PageResponseGetAISummary;
@@ -44,7 +46,7 @@ public class SummaryServiceImpl implements SummaryService {
   @Transactional(readOnly = true)
   public AISummary findAISummaryById(Long id) {
     return aiSummaryRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("AISummary not found"));
+        .orElseThrow(() -> new CustomException(ErrorCode.SUMMARY_NOT_FOUND));
   }
 
   @Override
