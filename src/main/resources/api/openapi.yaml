@@ -1,13 +1,13 @@
 openapi: 3.0.3
 info:
   title: 축구한컷 API
-  description: 축구한컷 서비스 API입니다~
+  description: 축구한컷 서비스 API
   termsOfService: https://hancut.vercel.app/
   contact:
     name: 김준우
     email: junnukim1007@gmail.com
   version: 1.0.0
-tags:
+tags:S
   - name: Summary
     description: AI 뉴스 요약 조회 관련 엔드포인트
 paths:

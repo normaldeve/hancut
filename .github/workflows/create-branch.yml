@@ -1,56 +1,112 @@
-name: Auto Create Branch
+name: Auto Create Branch + PR
 
 on:
   issues:
     types: [opened]
 
 permissions:
-  contents: write
-  issues: read
+  contents: write          # 브랜치 생성/푸시
+  pull-requests: write     # PR 생성
+  issues: write            # 이슈에 코멘트(선택)
 
 jobs:
-  create-branch:
+  create-branch-and-pr:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
 
-      - name: Extract keyword & branch type
-        id: extract
+    steps:
+      - name: Checkout default branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 기본 브랜치 전체 이력 필요시
+
+      - name: Decide type / keyword / routes
+        id: decide
         uses: actions/github-script@v6
         with:
           script: |
-            const body = context.payload.issue.body || '';
-            const labels = context.payload.issue.labels.map(l => l.name.toLowerCase());
-            
-            // 기본 prefix
+            const issue = context.payload.issue;
+            const body = issue.body || '';
+            const labels = (issue.labels || []).map(l => l.name.toLowerCase());
+
+            // 1) 작업 타입(type) 결정
+            //   우선순위: hotfix > release > refactor > fix > chore > feat(기본)
             let type = 'feat';
-            if (labels.includes('refactor')) type = 'refactor';
+            if (labels.includes('hotfix')) type = 'hotfix';
+            else if (labels.includes('release')) type = 'release';
+            else if (labels.includes('refactor')) type = 'refactor';
             else if (labels.includes('fix')) type = 'fix';
             else if (labels.includes('chore')) type = 'chore';
-            
-            // 키워드 추출
-            const keywordMatch = body.match(/### Branch Keyword\s*\n([^\n]+)/);
-            const keyword = keywordMatch ? keywordMatch[1].trim() : null;
+
+            // 2) 키워드 추출
+            const m = body.match(/###\s*Branch Keyword\s*\n([^\n]+)/i);
+            if (!m) {
+              core.setFailed('브랜치 키워드(### Branch Keyword)가 이슈 본문에 없습니다.');
+              return;
+            }
+            const rawKeyword = m[1].trim();
+
+            // 3) 키워드 정제
+            const keyword = rawKeyword
+              .toLowerCase()
+              .replace(/[^a-z0-9-]/g, '-')  // 영/숫/하이픈만
+              .replace(/-+/g, '-')          // 하이픈 중복 제거
+              .replace(/^-|-$/g, '')        // 앞/뒤 하이픈 제거
+              .slice(0, 30);                // 길이 제한
 
             if (!keyword) {
-              core.setFailed('브랜치 키워드가 없습니다.');
+              core.setFailed('정제된 브랜치 키워드가 비어 있습니다.');
               return;
             }
 
-            // 키워드 정규화
-            const cleanKeyword = keyword
-              .toLowerCase()
-              .replace(/[^a-z0-9-]/g, '-')
-              .replace(/-+/g, '-')
-              .slice(0, 20);
+            // 4) 라우팅 규칙
+            //   - hotfix: main → main
+            //   - release: develop → main   ← 추가
+            //   - refactor: develop → develop
+            //   - chore/feat: develop → develop
+            let from_branch = 'develop';
+            let pr_base = 'develop';
+
+            if (type === 'hotfix') {
+              from_branch = 'main';
+              pr_base = 'main';
+            } else if (type === 'release') {
+              from_branch = 'develop';
+              pr_base = 'main';
+            } else if (type === 'refactor') {
+              from_branch = 'develop';
+              pr_base = 'develop';
+            } else if (type === 'chore' || type === 'feat') {
+              from_branch = 'develop';
+              pr_base = 'develop';
+            }
+
+            // 5) 브랜치 이름
+            const branch = `${type}/#${issue.number}/${keyword}`;
 
             core.setOutput('type', type);
-            core.setOutput('keyword', cleanKeyword);
+            core.setOutput('keyword', keyword);
+            core.setOutput('from_branch', from_branch);
+            core.setOutput('pr_base', pr_base);
+            core.setOutput('branch', branch);
+      
 
-      - name: Create branch
+      - name: Create branch from decided base
+        id: create_branch
         uses: peterjgrainger/action-create-branch@v3.0.0
         env:
-          GITHUB_TOKEN: ${{ secrets.SECRET_KEY }}
+          # 레포 시크릿에 별도 토큰을 쓰고 싶다면 SECRET_KEY를,
+          # 기본 토큰을 쓰려면 GITHUB_TOKEN를 사용하세요.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          branch: ${{ steps.extract.outputs.type }}/#${{ github.event.issue.number }}/${{ steps.extract.outputs.keyword }}
+          branch: ${{ steps.decide.outputs.branch }}
+          from_branch: ${{ steps.decide.outputs.from_branch }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: ${{ steps.decide.outputs.pr_base }}   # release면 main
+          branch: ${{ steps.decide.outputs.branch }}  # e.g. release/#123/...
+          title: "[${{ steps.decide.outputs.type }}] #${{ github.event.issue.number }} - ${{ steps.decide.outputs.keyword }}"
+          body: |
+            $(cat .github/pull_request_template.md)
