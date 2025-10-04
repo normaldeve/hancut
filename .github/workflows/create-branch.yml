@@ -100,13 +100,3 @@ jobs:
         with:
           branch: ${{ steps.decide.outputs.branch }}
           from_branch: ${{ steps.decide.outputs.from_branch }}
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: ${{ steps.decide.outputs.pr_base }}   # release면 main
-          branch: ${{ steps.decide.outputs.branch }}  # e.g. release/#123/...
-          title: "[${{ steps.decide.outputs.type }}] #${{ github.event.issue.number }} - ${{ steps.decide.outputs.keyword }}"
-          body: |
-            $(cat .github/pull_request_template.md)

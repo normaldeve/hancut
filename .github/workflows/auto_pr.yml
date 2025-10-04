@@ -1,0 +1,69 @@
+name: Auto PR on Push
+
+on:
+  push:
+    branches:
+      - 'hotfix/**'
+      - 'release/**'
+      - 'refactor/**'
+      - 'feat/**'
+      - 'chore/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Decide base from branch name
+        id: route
+        shell: bash
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          if [[ "$BRANCH" == hotfix/* ]]; then
+            echo "base=main" >> $GITHUB_OUTPUT
+            echo "template=.github/PULL_REQUEST_TEMPLATE/hotfix.md" >> $GITHUB_OUTPUT
+          elif [[ "$BRANCH" == release/* ]]; then
+            echo "base=main" >> $GITHUB_OUTPUT
+            echo "template=.github/PULL_REQUEST_TEMPLATE/release.md" >> $GITHUB_OUTPUT
+          elif [[ "$BRANCH" == refactor/* ]]; then
+            echo "base=develop" >> $GITHUB_OUTPUT
+            echo "template=.github/pull_request_template.md" >> $GITHUB_OUTPUT
+          elif [[ "$BRANCH" == feat/* || "$BRANCH" == chore/* ]]; then
+            echo "base=develop" >> $GITHUB_OUTPUT
+            echo "template=.github/pull_request_template.md" >> $GITHUB_OUTPUT
+          else
+            echo "base=develop" >> $GITHUB_OUTPUT
+            echo "template=.github/pull_request_template.md" >> $GITHUB_OUTPUT
+
+      - name: Check diff with base (skip if no changes)
+        id: diff
+        shell: bash
+        run: |
+          git fetch origin ${{ steps.route.outputs.base }}
+          # ahead = head가 base보다 앞선 커밋 수
+          set +e
+          AHEAD=$(git rev-list --left-right --count origin/${{ steps.route.outputs.base }}...HEAD | awk '{print $2}')
+          set -e
+          echo "ahead=$AHEAD" >> $GITHUB_OUTPUT
+          echo "Ahead commits: $AHEAD"
+
+      - name: Create or Update PR
+        if: steps.diff.outputs.ahead != '0'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: ${{ steps.route.outputs.base }}
+          branch: ${{ github.ref_name }}
+          title: "[Auto] ${GITHUB_REF_NAME}"
+          body: |
+            $(cat ${{ steps.route.outputs.template }})
+
+      - name: Skip note (no diff)
+        if: steps.diff.outputs.ahead == '0'
+        run: echo "Base와 차이가 없어 PR을 생성하지 않습니다."
