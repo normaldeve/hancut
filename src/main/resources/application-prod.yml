@@ -11,6 +11,9 @@ spring:
       mode: always
       schema-locations:
         - classpath:org/springframework/batch/core/schema-drop-postgresql.sql
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   jpa:
     hibernate:
       ddl-auto: validate

@@ -6,9 +6,6 @@ spring:
   profiles:
     active:
       - dev
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
